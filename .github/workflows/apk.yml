@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -19,8 +19,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - uses: android-actions/setup-android@v3
 
       - name: O'yin fayllarini yig'ish
         run: |
@@ -37,9 +35,11 @@ jobs:
           npx cap init "Qarovsiz Uy" uz.qarovsiz.uy --web-dir www
           npx cap add android
           npx cap sync android
+          # ikonka
           RES=android/app/src/main/res
           rm -rf $RES/mipmap-anydpi-v26
           for d in $RES/mipmap-*; do cp www/icon-192.png $d/ic_launcher.png; cp www/icon-192.png $d/ic_launcher_round.png; done
+          # ekran gorizontal, to'liq ekran
           sed -i 's/android:launchMode="singleTask"/android:launchMode="singleTask" android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
 
       - name: APK yasash
