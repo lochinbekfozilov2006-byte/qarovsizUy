@@ -9,11 +9,13 @@ if(TOUCH)document.body.classList.add('touch');
 const LOG=(...a)=>{if(Q.get('debug'))console.log('[game]',...a)};
 
 /* ---------- renderer ---------- */
-const cv=$('#cv');const R=new THREE.WebGLRenderer({canvas:cv,antialias:!TOUCH,powerPreference:'high-performance'});
-R.setPixelRatio(Math.min(devicePixelRatio,TOUCH?1:1.5));R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+let GQ=new URLSearchParams(location.search).get('gfx')||(()=>{try{return localStorage.getItem('qu_gfx')}catch(e){return null}})()||(TOUCH?'low':'mid');
+const QS={low:{pr:.75,sh:false,lights:3,far:85},mid:{pr:1,sh:true,map:1024,lights:5,far:110},high:{pr:1.5,sh:true,map:2048,soft:true,lights:8,far:300}}[GQ]||{pr:1,sh:true,map:1024,lights:5,far:110};
+const cv=$('#cv');const R=new THREE.WebGLRenderer({canvas:cv,antialias:!TOUCH&&GQ==='high',powerPreference:'high-performance'});
+R.setPixelRatio(Math.min(devicePixelRatio,QS.pr));R.shadowMap.enabled=QS.sh;R.shadowMap.type=QS.soft?THREE.PCFSoftShadowMap:THREE.PCFShadowMap;R.shadowMap.autoUpdate=QS.sh;
 R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.35;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x05060b);scene.fog=new THREE.FogExp2(0x06070c,.03);
-const cam=new THREE.PerspectiveCamera(70,1,.05,300);scene.add(cam);
+const cam=new THREE.PerspectiveCamera(70,1,.05,QS.far);scene.add(cam);
 const flash=new THREE.SpotLight(0xfff1d6,0,26,.52,.45,1.3);flash.position.set(.18,-.12,.05);flash.target.position.set(0,-.15,-1);cam.add(flash);cam.add(flash.target);
 function size(){const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}addEventListener('resize',size);size();
 W.build(scene);const G=W.G;const H=W.H;
@@ -30,7 +32,7 @@ const monster={pos:V(0,-50,0),ry:0,vis:false,anim:'idle',model:null,tpos:V(0,-50
 const furnObjs=[];let FURN=null;
 A.onProgress=p=>{$('#bootBar i').style.width=Math.round(p*100)+'%'};
 let carSrc=null;A.progress.total=9;
-const loadAll=Promise.all([A.loadFurniture().then(P=>{FURN=P}),A.loadChars(),A.loadMonster(),A.loadMonsters(),A.loadGLB('car').then(g=>{carSrc=g})]).then(buildFurniture).then(()=>{setupCar();buildInteractive();W.indexSolids();{const t0=performance.now();buildNav();window.__navMs=Math.round(performance.now()-t0)}makeThumbs();monster.models={wolf:A.makeMonster(),zombie:A.makeHumanMonster('zombie'),parasite:A.makeHumanMonster('parasite')};Object.values(monster.models).forEach(m=>{scene.add(m.group);m.group.visible=false});monster.model=monster.models.wolf;monster.kind='wolf';bootReady()}).catch(e=>{console.error(e);$('#bootMsg').textContent="Yuklashda xato: sahifani yangilang."});
+const loadAll=Promise.all([A.loadFurniture().then(P=>{FURN=P}),A.loadChars(),A.loadMonster(),A.loadMonsters(),A.loadGLB('car').then(g=>{carSrc=g})]).then(buildFurniture).then(()=>{setupCar();buildInteractive();W.indexSolids();{const t0=performance.now();buildNav();window.__navMs=Math.round(performance.now()-t0)}makeThumbs();monster.models={wolf:A.makeMonster(),zombie:A.makeHumanMonster('zombie'),parasite:A.makeHumanMonster('parasite')};Object.values(monster.models).forEach(m=>{scene.add(m.group);m.group.visible=false});monster.model=monster.models.wolf;monster.kind='wolf';try{optimizeScene()}catch(e){console.warn('opt',e)}bootReady()}).catch(e=>{console.error(e);$('#bootMsg').textContent="Yuklashda xato: sahifani yangilang."});
 function buildFurniture(){const C=W.C;const geoCache={};const getG=k=>geoCache[k]||(geoCache[k]=FURN[k]?A.parseFurn(FURN[k]):Promise.resolve([]));
  const jobs=W.F.map(f=>{const [k,x,z,ry,col,s,y0,tag]=f;let par=G.ground,y=y0||0,rx=0;if(tag&&tag.startsWith('yard'))par=G.yard;if(tag&&tag.startsWith('base'))par=G.base;if(tag&&tag.endsWith('tip'))rx=-PI/2;
   return getG(k).then(geos=>{const g=new THREE.Group();geos.forEach(ge=>{const m=new THREE.Mesh(ge,W.MC(col,.8,col===C.metal?.5:0,true));m.castShadow=m.receiveShadow=true;g.add(m)});
@@ -349,6 +351,61 @@ function renderObjectives(){const it=ST.items,c=ST.car;const row=(ok,t)=>'<li cl
  $('#hold').innerHTML=(it.key.holder===me.id?'<span class="chipI">Kalit</span>':'')+(it.bat.holder===me.id?'<span class="chipI">Akkumulyator</span>':'')}
 function renderPlayers(){$('#plist').innerHTML=Object.keys(ST.players).map(id=>{const p=ST.players[id];return '<li class="'+(p.alive?'':'dead')+'">'+esc(p.name)+(id===me.id?' (siz)':'')+'<i>'+(p.car?'mashinada':!p.alive?'ushlandi':p.hide>=0?'yashiringan':'')+'</i></li>'}).join('')}
 
+{const NM={low:'Past',mid:"O'rta",high:'Yuqori'},ORD=['low','mid','high'];const gn=document.getElementById('gfxName');if(gn)gn.textContent=NM[GQ]||NM.mid;
+ const gb=document.getElementById('mGfx');if(gb)gb.onclick=()=>{const n=ORD[(ORD.indexOf(GQ)+1)%3];try{localStorage.setItem('qu_gfx',n)}catch(e){}const u=new URL(location.href);u.searchParams.delete('gfx');location.href=u.toString()}}
+/* ---------- performance: static batching + light pool ---------- */
+function optimizeScene(){
+ const G=W.G;if(!QS.sh){W.moon.castShadow=false}else{W.moon.shadow.mapSize.set(QS.map,QS.map)}
+ const dyn=new Set();const mark=o=>{if(o)o.traverse(c=>dyn.add(c))};
+ (W.doors||[]).forEach(d=>d&&d.hinges.forEach(mark));CONT.forEach(c=>mark(c.g));HIDE.forEach(h=>mark(h.doors));mark(G.items);mark(W.car);
+ [W.porchBulb,W.bsmBulb,W.lampBulb,W.statueHead].concat(W.lampBulbs||[],W.curtains||[]).forEach(o=>o&&mark(o.isMesh&&o.parent!==G.ground&&o.parent!==G.yard?o.parent:o));
+ const all=[];scene.traverse(o=>all.push(o));const snap=o=>[o.position.x,o.position.y,o.position.z,o.rotation.x,o.rotation.y,o.rotation.z,o.scale.x,o.scale.y,o.scale.z,o.visible].join();
+ const s0=all.map(snap);W.anim.forEach(f=>{try{f(3.3,.016);f(7.9,.016)}catch(e){}});all.forEach((o,i)=>{if(snap(o)!==s0[i])mark(o)});
+ scene.updateMatrixWorld(true);const CELL=48,groups={};
+ Object.keys(G).forEach(gk=>{const top=G[gk];if(gk==='items')return;
+  top.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh||dyn.has(o)||Array.isArray(o.material)||o.material.transparent||!o.visible)return;
+   let a=o.parent,ok=true;while(a&&a!==top){if(!a.visible){ok=false;break}a=a.parent}if(!ok)return;
+   const ge=o.geometry;if(!ge||!ge.attributes.position||ge.morphAttributes&&Object.keys(ge.morphAttributes).length)return;
+   const b=new THREE.Vector3().setFromMatrixPosition(o.matrixWorld);
+   const k=gk+'|'+o.material.uuid+'|'+(o.castShadow?1:0)+(o.receiveShadow?1:0)+'|'+Math.floor(b.x/CELL)+','+Math.floor(b.z/CELL)+'|'+(ge.attributes.uv?1:0);
+   (groups[k]=groups[k]||{top,mat:o.material,cs:o.castShadow,rs:o.receiveShadow,list:[]}).list.push(o)})});
+ let removed=0;
+ const mergeList=(list,root,mat,cs,rs)=>{const inv=new THREE.Matrix4();let nv=0,ni=0;const uv=!!list[0].geometry.attributes.uv;
+  list.forEach(o=>{const g=o.geometry;nv+=g.attributes.position.count;ni+=g.index?g.index.count:g.attributes.position.count});
+  const P=new Float32Array(nv*3),Nn=new Float32Array(nv*3),U=uv?new Float32Array(nv*2):null,I=nv>65535?new Uint32Array(ni):new Uint16Array(ni);
+  let vo=0,io=0;root.updateMatrixWorld(true);inv.copy(root.matrixWorld).invert();const m=new THREE.Matrix4(),nm=new THREE.Matrix3(),v=new THREE.Vector3();
+  list.forEach(o=>{const g=o.geometry;if(!g.attributes.normal)g.computeVertexNormals();m.multiplyMatrices(inv,o.matrixWorld);nm.getNormalMatrix(m);const flip=m.determinant()<0;
+   const pa=g.attributes.position,na=g.attributes.normal,c=pa.count,ua=g.attributes.uv;
+   for(let i=0;i<c;i++){v.fromBufferAttribute(pa,i).applyMatrix4(m);P[(vo+i)*3]=v.x;P[(vo+i)*3+1]=v.y;P[(vo+i)*3+2]=v.z;v.fromBufferAttribute(na,i).applyMatrix3(nm).normalize();Nn[(vo+i)*3]=v.x;Nn[(vo+i)*3+1]=v.y;Nn[(vo+i)*3+2]=v.z;if(U&&ua){U[(vo+i)*2]=ua.getX(i);U[(vo+i)*2+1]=ua.getY(i)}}
+   const n=g.index?g.index.count:c,ix=j=>g.index?g.index.getX(j):j;
+   for(let j=0;j<n;j+=3){I[io++]=vo+ix(j);if(flip){I[io++]=vo+ix(j+2);I[io++]=vo+ix(j+1)}else{I[io++]=vo+ix(j+1);I[io++]=vo+ix(j+2)}}
+   vo+=c;o.parent.remove(o);removed++});
+  const bg=new THREE.BufferGeometry();bg.setAttribute('position',new THREE.BufferAttribute(P,3));bg.setAttribute('normal',new THREE.BufferAttribute(Nn,3));if(U)bg.setAttribute('uv',new THREE.BufferAttribute(U,2));bg.setIndex(new THREE.BufferAttribute(I,1));bg.computeBoundingSphere();bg.computeBoundingBox();
+  const mm=new THREE.Mesh(bg,mat);mm.castShadow=cs;mm.receiveShadow=rs;root.add(mm);return mm};
+ Object.values(groups).forEach(gr=>{if(gr.list.length>1)mergeList(gr.list,gr.top,gr.mat,gr.cs,gr.rs)});
+ /* rigid moving parts (doors, drawers, closet doors): merge inside each part, keep the part movable */
+ const parts=[];(W.doors||[]).forEach(d=>d&&d.hinges.forEach(h=>parts.push(h)));CONT.forEach(c=>parts.push(c.g));HIDE.forEach(h=>h.doors&&parts.push(h.doors));
+ parts.forEach(root=>{const by={};root.traverse(o=>{if(o.isMesh&&!o.isSkinnedMesh&&!Array.isArray(o.material)&&!o.material.transparent&&!o.userData.glint){const k=o.material.uuid+'|'+(o.castShadow?1:0)+(o.receiveShadow?1:0)+(o.geometry.attributes.uv?1:0);(by[k]=by[k]||[]).push(o)}});
+  Object.values(by).forEach(l=>{if(l.length>1)mergeList(l,root,l[0].material,l[0].castShadow,l[0].receiveShadow)})});
+ /* empty groups left behind */
+ const empty=[];Object.values(G).forEach(t=>t.traverse(o=>{if(o!==t&&o.type==='Group'&&!dyn.has(o)&&o.children.length===0)empty.push(o)}));empty.forEach(o=>o.parent&&o.parent.remove(o));
+ /* low quality: cheaper Phong shading instead of PBR */
+ if(GQ==='low'){const cache=new Map();const conv=mt=>{if(!mt||!mt.isMeshStandardMaterial)return mt;if(cache.has(mt))return cache.get(mt);
+   const n=new THREE.MeshPhongMaterial({color:mt.color,map:mt.map,emissive:mt.emissive,emissiveMap:mt.emissiveMap,emissiveIntensity:mt.emissiveIntensity,side:mt.side,transparent:mt.transparent,opacity:mt.opacity,alphaTest:mt.alphaTest,flatShading:mt.flatShading,shininess:Math.max(2,(1-mt.roughness)*40),depthWrite:mt.depthWrite});
+   n.specular.setScalar(.04+mt.metalness*.2);n.skinning=mt.skinning;n.morphTargets=mt.morphTargets;n.name=mt.name;n.userData=mt.userData;cache.set(mt,n);return n};
+  scene.traverse(o=>{if(o.isMesh)o.material=Array.isArray(o.material)?o.material.map(conv):conv(o.material)});A.convMat=conv}
+ /* sky (moon + stars) follows the camera so a short view distance doesn't clip it */
+ if(QS.far<300){const sk=new THREE.Group(),k=QS.far/320;scene.children.slice().forEach(o=>{if(o.isPoints||(o.isMesh&&o.material&&o.material.fog===false&&o.geometry.type==='SphereGeometry')){scene.remove(o);sk.add(o);if(o.isPoints)o.material.size*=k}});sk.scale.setScalar(k);scene.add(sk);SKY=sk}
+ /* light pool: fixed number of real point lights follow the nearest virtual ones */
+ const pts=[];scene.traverse(o=>{if(o.isPointLight)pts.push(o)});
+ pts.forEach(l=>{const wp=new THREE.Vector3();l.getWorldPosition(wp);l.userData.wp=wp;l.parent.remove(l)});LP.virt=pts;
+ for(let i=0;i<QS.lights;i++){const l=new THREE.PointLight(0xffffff,0,1,1.6);scene.add(l);LP.real.push(l)}
+ window.__opt={removed,merged:Object.keys(groups).length,lights:pts.length}}
+const LP={virt:[],real:[]};let SKY=null;
+function updateLightPool(){if(!LP.real.length)return;const c=cam.position;
+ const cand=LP.virt.filter(l=>l.intensity>0.01).map(l=>({l,d:l.userData.wp.distanceTo(c)-l.distance*.6})).sort((a,b)=>a.d-b.d);
+ LP.real.forEach((r,i)=>{const o=cand[i];if(o&&o.d<45){const l=o.l;r.position.copy(l.userData.wp);r.color.copy(l.color);r.intensity=l.intensity;r.distance=l.distance;r.decay=l.decay}else r.intensity=0})}
+
 /* ---------- main loop ---------- */
 const clock=new THREE.Clock();let ambT=12,netT=0,snapT=0;const tmpV=V(0,0,0);
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
@@ -383,7 +440,7 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
   W.doors.forEach((d,i)=>{if(!d)return;const tg=ST.doors[i]?1:0;d.cur+=(tg-d.cur)*Math.min(1,dt*5);d.hinges.forEach(h=>h.rotation.y=h.userData.closed+(h.userData.open-h.userData.closed)*d.cur);d.solid.off=d.cur>.5});
  }
  if(cam.position.distanceTo(moonAt)>4){moonAt.copy(cam.position);W.moon.position.set(moonAt.x-40,55,moonAt.z+45);W.moon.target.position.set(moonAt.x,0,moonAt.z);W.moon.target.updateMatrixWorld()}
- R.render(scene,cam)}
+ updateLightPool();if(SKY)SKY.position.copy(cam.position);R.render(scene,cam)}
 const moonAt=V(0,0,0);scene.add(W.moon.target);
 function updateRemotes(dt,t){for(const id in remotes){const r=remotes[id];const p=ST.players[id];if(!p){r.ch.group.visible=false;continue}
  r.pos.lerp(r.tpos,Math.min(1,dt*10));let dr=r.try-r.ry;while(dr>PI)dr-=2*PI;while(dr<-PI)dr+=2*PI;r.ry+=dr*Math.min(1,dt*10);
@@ -400,5 +457,5 @@ function updateSpectate(dt){const ids=Object.keys(ST.players).filter(id=>id!==me
  if(!ids.includes(spectId))spectId=ids[0];const r=remotes[spectId];if(!r)return;const back=fwdOf(r.ry);const tp=V(r.pos.x-back.x*2.6,r.pos.y+2.2,r.pos.z-back.z*2.6);cam.position.lerp(tp,Math.min(1,dt*4));cam.lookAt(r.pos.x,r.pos.y+1.4,r.pos.z);$('#deadWho').textContent=ST.players[spectId].name}
 $('#deadNext').onclick=()=>{const ids=Object.keys(ST.players).filter(id=>id!==me.id&&ST.players[id].alive);if(!ids.length)return;const k=(ids.indexOf(spectId)+1)%ids.length;spectId=ids[k]};
 show('boot');loop();
-window.__G={cam,scene,keys,updatePlayer,tick:(n,dt)=>{for(let i=0;i<n;i++){ST.t+=dt;hostMonster(dt);if(ST.ended)break}},ST,P,MS,me,act,hostAct,W,NAV,astar,CONT,HIDE,IT,remotes,startIntro,endIntro,monster,introSeek:t=>{if(intro)intro.t=t},get hostT(){return hostT},itemWorldPos,interactables};
+window.__G={R,GQ,cam,scene,keys,updatePlayer,tick:(n,dt)=>{for(let i=0;i<n;i++){ST.t+=dt;hostMonster(dt);if(ST.ended)break}},ST,P,MS,me,act,hostAct,W,NAV,astar,CONT,HIDE,IT,remotes,startIntro,endIntro,monster,introSeek:t=>{if(intro)intro.t=t},get hostT(){return hostT},itemWorldPos,interactables};
 })();
