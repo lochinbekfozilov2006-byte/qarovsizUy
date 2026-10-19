@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#09080b">
+<title>Qarovsiz Uy</title>
+<meta name="description" content="2–4 kishilik onlayn horror o'yini: mashinani tuzating va mahluqdan qoching.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Barlow+Semi+Condensed:wght@400;500;600&display=swap">
+<style>
+/* Layout: one full-screen WebGL canvas; every screen is an overlay panel anchored left or centre; HUD hugs the corners. Single dark look. */
+:root{
+  --bg:#09080b; --panel:rgba(14,11,13,.86); --panel-solid:#141114; --fg:#ece3d4; --muted:#a3967f; --line:rgba(236,227,212,.16);
+  --blood:#b8402c; --blood-soft:rgba(184,64,44,.24); --brass:#d9b46a; --ok:#8fbf7a;
+  --f-display:"IM Fell English SC","Iowan Old Style",Georgia,serif;
+  --f-ui:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-ui);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
+.screen{position:fixed;inset:0;z-index:5;padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}
+h1,h2{font-family:var(--f-display);font-weight:400;margin:0;letter-spacing:.01em;text-wrap:balance}
+button{font:600 16px/1 var(--f-ui);letter-spacing:.04em;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:4px;padding:13px 18px;cursor:pointer}
+button:hover{border-color:rgba(236,227,212,.45)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+button.primary{background:var(--blood);border-color:var(--blood);color:#fff}
+button.primary:hover{background:#cc4a33}
+button:disabled{opacity:.45;cursor:default}
+input{font:500 18px var(--f-ui);color:var(--fg);background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:4px;padding:12px 14px;width:100%}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:24px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.eb{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass)}
+.muted{color:var(--muted)}
+.err{color:#ff8a72;min-height:20px;font-size:15px}
+/* boot */
+#boot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;background:radial-gradient(ellipse at 50% 40%,#1b1214 0%,#09080b 70%)}
+#boot h1{font-size:clamp(46px,9vw,92px);line-height:.95}
+#boot h1 span{color:var(--blood)}
+.bar{width:min(280px,70vw);height:3px;background:var(--line)}.bar i{display:block;height:100%;width:0;background:var(--blood);transition:width .25s}
+/* intro */
+#intro{padding:0;pointer-events:none}
+#intro::before,#intro::after{content:"";position:absolute;left:0;right:0;height:11vh;background:#000}
+#intro::before{top:0}#intro::after{bottom:0}
+#sub{position:absolute;left:50%;bottom:calc(11vh + 24px);transform:translateX(-50%);width:min(760px,88vw);text-align:center;font-family:var(--f-display);font-size:clamp(19px,2.6vw,28px);line-height:1.35;color:#f2eadc;text-shadow:0 2px 12px #000}
+#introTitle{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;font-size:clamp(52px,10vw,110px);color:var(--fg)}
+#introTitle span{color:var(--blood)}
+#skipBtn{pointer-events:auto;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 3vh);z-index:2;background:rgba(0,0,0,.55);font-size:14px;padding:10px 18px}
+#introBar{position:absolute;left:0;right:0;bottom:11vh;height:2px;background:transparent}#introBar i{display:block;height:100%;width:0;background:var(--blood)}
+/* menu */
+#menu{display:flex;align-items:center}
+#menu .panel{width:min(400px,100%);display:flex;flex-direction:column;gap:12px}
+#menu h1{font-size:clamp(44px,7vw,64px);line-height:.95;margin-bottom:6px}
+#menu h1 span{color:var(--blood)}
+#menu p{margin:4px 0 0;font-size:15px;line-height:1.5;color:var(--muted)}
+#menu button{text-align:left;font-size:18px;padding:15px 18px;display:flex;justify-content:space-between;align-items:center}
+#menu button small{font-weight:400;font-size:13px;color:var(--muted);letter-spacing:0}
+#menu button.primary small{color:rgba(255,255,255,.75)}
+/* setup */
+#setup,#lobby,#end{display:flex;align-items:center;justify-content:center}
+#setup .panel,#lobby .panel,#end .panel{width:min(480px,100%);display:flex;flex-direction:column;gap:14px;max-height:100%;overflow:auto}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#chars{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.charCard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px;text-transform:none;letter-spacing:0}
+.charCard img{width:100%;aspect-ratio:3/4;object-fit:contain;background:#16121a;border-radius:3px}
+.charCard[aria-pressed="true"]{border-color:var(--blood);background:var(--blood-soft)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
+#codeIn{font:600 30px var(--f-ui);letter-spacing:.5em;text-align:center}
+/* lobby */
+#lobbyCode{font:600 clamp(52px,12vw,72px)/1 var(--f-ui);letter-spacing:.18em;color:var(--brass);font-variant-numeric:tabular-nums}
+.codeRow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#lobbyList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+#lobbyList li{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;font-size:17px}
+#lobbyList li .dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+#lobbyList li em{font-style:normal;color:var(--muted);margin-left:auto}
+#lobbyList li i{font-style:normal;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--brass)}
+/* hud */
+#hud{padding:0;pointer-events:none}
+#touchLayer{position:absolute;inset:0;pointer-events:auto;touch-action:none}
+.hudBox{position:absolute;pointer-events:none;background:rgba(10,8,10,.62);border:1px solid var(--line);border-radius:5px;padding:10px 12px}
+#objBox{left:max(12px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));max-width:min(300px,55vw)}
+#obj{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:15px}
+#obj li{display:flex;gap:8px;align-items:center;color:var(--fg)}
+#obj li span{width:12px;height:12px;border:1.5px solid var(--muted);border-radius:2px;flex:none}
+#obj li.ok{color:var(--muted);text-decoration:line-through}
+#obj li.ok span{background:var(--ok);border-color:var(--ok)}
+#hold{display:flex;gap:6px;margin-top:8px}#hold:empty{display:none}
+.chipI{font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:3px;background:rgba(217,180,106,.18);color:var(--brass);border:1px solid rgba(217,180,106,.45)}
+#plBox{right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top))}
+#plist{list-style:none;margin:6px 0 0;padding:0;font-size:14px;display:flex;flex-direction:column;gap:3px}
+#plist li i{font-style:normal;color:var(--muted);margin-left:6px;font-size:12px}
+#plist li.dead{color:#ff8a72;text-decoration:line-through}
+#cross{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:rgba(236,227,212,.6)}
+#stam{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 14px);width:160px;height:4px;background:rgba(236,227,212,.12);border-radius:2px;overflow:hidden}
+#stam i{display:block;height:100%;background:var(--fg);opacity:.7}#stam.low i{background:var(--blood);opacity:1}
+#handBtn{pointer-events:auto;position:absolute;left:50%;top:58%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(10,8,10,.7);border:1px solid rgba(217,180,106,.55);border-radius:50px;padding:12px 18px;color:var(--fg);font-size:15px}
+#handBtn svg{width:34px;height:34px;stroke:var(--brass);stroke-width:1.6;fill:none}
+#handBtn.off{border-color:var(--line);opacity:.75}#handBtn.off svg{stroke:var(--muted)}
+#handBtn kbd{font:600 11px var(--f-ui);border:1px solid var(--line);border-radius:3px;padding:1px 5px;color:var(--muted)}
+.touch #handBtn kbd{display:none}
+#pad{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:calc(env(safe-area-inset-bottom) + 34px);display:flex;flex-direction:column;gap:10px;pointer-events:auto}
+#pad button{width:66px;height:66px;border-radius:50%;padding:0;background:rgba(10,8,10,.55);font-size:12px;letter-spacing:.06em}
+#pad button[aria-pressed="true"]{background:var(--blood-soft);border-color:var(--blood)}
+#flBtnD{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:calc(env(safe-area-inset-bottom) + 14px);pointer-events:auto}
+#joy{position:absolute;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:1px solid var(--line);background:rgba(10,8,10,.25);pointer-events:none}
+#joyKnob{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(236,227,212,.25)}
+#carBar{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 40px);transform:translateX(-50%);display:flex;gap:10px;pointer-events:auto}
+#hideVeil{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.85) 100%)}
+#hideVeil[data-k="closet"]{background:repeating-linear-gradient(0deg,rgba(0,0,0,.92) 0 22px,transparent 22px 34px),radial-gradient(ellipse at center,transparent 30%,#000 90%)}
+#hideVeil[data-k="curtain"]{background:linear-gradient(90deg,rgba(60,8,10,.85),rgba(60,8,10,.35) 30%,rgba(60,8,10,.35) 70%,rgba(60,8,10,.85))}
+#hideVeil span{position:absolute;left:50%;top:22%;transform:translateX(-50%);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+#redFlash{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(120,0,0,.0),rgba(140,0,0,.75));animation:pulse .25s infinite alternate}
+@keyframes pulse{to{opacity:.6}}
+#deadMsg{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 40px);transform:translateX(-50%);pointer-events:auto;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}
+#deadMsg h2{font-size:30px;color:#ff8a72}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 30%);transform:translateX(-50%);z-index:20;background:rgba(10,8,10,.85);border:1px solid var(--line);border-radius:4px;padding:10px 16px;font-size:16px;max-width:min(560px,90vw);text-align:center;pointer-events:none}
+#end h2{font-size:clamp(36px,6vw,52px)}
+#endList{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+#endList li{display:flex;justify-content:space-between;padding:8px 12px;border:1px solid var(--line);border-radius:4px}
+#endList em{font-style:normal;color:var(--muted)}
+@media (max-height:520px){.charCard img{aspect-ratio:auto;height:92px}.panel{padding:14px;gap:10px!important}#setup h2{font-size:20px}#menu h1{font-size:38px}#menu button{padding:11px 14px;font-size:16px}#menu p{display:none}}
+@media (max-width:640px){#objBox{max-width:52vw;padding:8px 10px}#obj{font-size:13px}#plBox{display:none}.panel{padding:18px}}
+@media (prefers-reduced-motion:reduce){#redFlash{animation:none}.bar i{transition:none}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+
+<section id="boot" class="screen">
+  <div class="eb">2–4 kishilik onlayn horror</div>
+  <h1>Qarovsiz <span>Uy</span></h1>
+  <div class="bar" id="bootBar"><i></i></div>
+  <p id="bootMsg" class="muted">Uy yuklanmoqda…</p>
+  <button id="bootBtn" class="primary" disabled>Kuting…</button>
+</section>
+
+<section id="intro" class="screen" hidden>
+  <div id="sub"></div>
+  <div id="introBar"><i></i></div>
+  <h1 id="introTitle" hidden><span style="color:var(--fg)">Qarovsiz&nbsp;</span><span>Uy</span></h1>
+  <button id="skipBtn">O'tkazib yuborish ›</button>
+</section>
+
+<section id="menu" class="screen" hidden>
+  <div class="panel">
+    <div class="eb">Bosh menyu</div>
+    <h1>Qarovsiz <span>Uy</span></h1>
+    <button id="mCreate" class="primary">Baza ochish <small>do'stlarni chaqirish</small></button>
+    <button id="mJoin">Bazaga qo'shilish <small>4 xonali kod</small></button>
+    <button id="mSolo">Yolg'iz o'ynash <small>bir o'zingiz</small></button>
+    <p>Maqsad: kalit va akkumulyatorni topib, garajdagi eski mashinani tuzating va qoching. Mahluq sizni ko'rsa, shkafga, stol tagiga yoki parda orqasiga yashiring.</p>
+  </div>
+</section>
+
+<section id="setup" class="screen" hidden>
+  <div class="panel">
+    <div class="eb">Personaj</div>
+    <h2 id="setupTitle">Baza ochish</h2>
+    <label class="f" for="nameIn">Ismingiz<input id="nameIn" maxlength="14" autocomplete="off" placeholder="Masalan: Lochinbek"></label>
+    <label class="f" id="codeRow" for="codeIn" hidden>Baza kodi<input id="codeIn" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000"></label>
+    <div id="chars">
+      <button class="charCard" data-c="marlon" aria-pressed="true"><img id="thumb_marlon" alt="Marlon"><span>Marlon</span></button>
+      <button class="charCard" data-c="boy" aria-pressed="false"><img id="thumb_boy" alt="Bola"><span>Bola</span></button>
+      <button class="charCard" data-c="kate" aria-pressed="false"><img id="thumb_kate" alt="Kate"><span>Kate</span></button>
+    </div>
+    <div class="err" id="setupErr" role="alert"></div>
+    <div class="row"><button id="setupBack">Orqaga</button><button id="setupGo" class="primary">Davom etish</button></div>
+  </div>
+</section>
+
+<section id="lobby" class="screen" hidden>
+  <div class="panel">
+    <div class="eb">Baza kodi</div>
+    <div class="codeRow"><div id="lobbyCode">----</div><button id="copyCode">Nusxalash</button></div>
+    <p class="muted" style="margin:0">Shu kodni do'stlaringizga yuboring. Ular "Bazaga qo'shilish"ni bosib, kodni yozishadi.</p>
+    <div class="eb" id="lobbyCount">1 / 4 o'yinchi</div>
+    <ul id="lobbyList"></ul>
+    <p class="err" id="lobbyNeed">Boshlash uchun kamida 2 o'yinchi kerak.</p>
+    <p class="muted" id="lobbyWait" hidden>Baza egasi o'yinni boshlashini kuting…</p>
+    <div class="row"><button id="lobbyLeave">Chiqish</button><button id="lobbyStart" class="primary" disabled>Boshlash</button></div>
+  </div>
+</section>
+
+<section id="hud" class="screen" hidden>
+  <div id="touchLayer"></div>
+  <div id="cross"></div>
+  <div class="hudBox" id="objBox"><div class="eb">Vazifa</div><ul id="obj"></ul><div id="hold"></div></div>
+  <div class="hudBox" id="plBox"><div class="eb">O'yinchilar</div><ul id="plist"></ul></div>
+  <div id="stam"><i></i></div>
+  <button id="handBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12.5V5.6a1.4 1.4 0 0 1 2.8 0V11M10.8 10.5V4.2a1.4 1.4 0 0 1 2.8 0v6.3M13.6 10.5V5.2a1.4 1.4 0 0 1 2.8 0V11M16.4 11V8.4a1.4 1.4 0 0 1 2.8 0v5.4c0 4.1-2.9 7.2-6.9 7.2h-.9c-2.6 0-4.3-1.2-5.9-3.4l-2.5-3.7a1.5 1.5 0 0 1 2.4-1.8L8 14.4"/></svg><span id="handLbl">Ochish</span><kbd>E</kbd></button>
+  <div id="pad" hidden><button id="runBtn" aria-pressed="false">YUGUR</button><button id="flBtn" aria-pressed="true">FONAR</button></div>
+  <div id="joy" hidden><div id="joyKnob"></div></div>
+  <div id="carBar" hidden><button id="exitCarBtn">Tushish</button><button id="driveBtn" class="primary">Haydash</button></div>
+  <div id="hideVeil" hidden><span>Yashiringansiz</span></div>
+  <div id="redFlash" hidden></div>
+  <div id="deadMsg" hidden><h2>Sizni ushlab oldi</h2><span class="muted">Kuzatyapsiz: <b id="deadWho"></b></span><button id="deadNext">Boshqa o'yinchi</button></div>
+</section>
+
+<section id="end" class="screen" hidden>
+  <div class="panel">
+    <div class="eb">O'yin tugadi</div>
+    <h2 id="endTitle"></h2>
+    <p id="endText" class="muted" style="margin:0;line-height:1.5"></p>
+    <ul id="endList"></ul>
+    <button id="endBack" class="primary">Bosh menyuga</button>
+  </div>
+</section>
+<div id="toast" hidden></div>
+
+<script src="js/three.min.js"></script>
+<script src="js/meshopt_decoder.js"></script>
+<script src="js/GLTFLoader.js"></script>
+<script src="js/SkeletonUtils.js"></script>
+<script src="js/peerjs.min.js"></script>
+<script src="js/world.js"></script>
+<script src="js/actors.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/config.js"></script>
+<script src="js/net.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
