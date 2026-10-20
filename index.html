@@ -324,6 +324,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 .dRow #daily2x{display:flex;align-items:center}
 #end .panel{max-height:100%;overflow-y:auto}
 @media (max-height:640px){#end h2{font-size:30px}#endText{display:none}#end .panel{gap:8px;padding:16px}.ecTop b{font-size:22px}}
+.fCard.code input{flex:1;min-width:0;font:600 17px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;padding:10px 12px;background:rgba(9,8,11,.7);border:1px solid var(--line);border-radius:4px;color:var(--fg)}.fCard.code button{background:var(--brass);border-color:var(--brass);color:#1a1408}.fCard.code{border-style:solid;border-color:rgba(217,180,106,.5)}
 </style>
 </head>
 <body>
@@ -521,7 +522,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
     <div class="tgHead"><div class="tgLogo"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l12-9"/></svg></div><div class="grow"><div class="eb tgEb" data-i="tg_eb"></div><h2 data-i="tg_t"></h2></div><div class="plusPill"><svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><b>+150</b></div></div>
     <p class="muted" data-i="tg_d" style="margin:0"></p>
     <div class="tgStep" id="tgS1"><span class="num">1</span><span class="grow" data-i="tg_s1"></span><button id="tgOpen" class="tgOpen" data-i="tg_open"></button></div>
-    <div class="tgStep" id="tgS2"><span class="num">2</span><span class="grow" id="tgS2t"></span></div>
+    <div class="tgStep" id="tgS2"><span class="num">2</span><span class="grow" id="tgS2t"></span><button id="tgBot" class="tgOpen" hidden></button></div>
     <div class="row2"><button id="tgLater" data-i="tg_later"></button><button id="tgClaim" class="primary grow"></button></div>
     <small class="muted" data-i="tg_once"></small>
   </div>
