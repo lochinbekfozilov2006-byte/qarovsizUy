@@ -16,7 +16,11 @@ const R_TOK = () => env('KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_TOKEN');
 const BOT = () => env('BOT_TOKEN', 'TELEGRAM_BOT_TOKEN');
 
 /* ---------- Redis (Upstash REST) ---------- */
+/* every key gets a 'qu:' prefix, so this game can share one database with other projects */
+const PFX = process.env.KEY_PREFIX || 'qu:';
+function pk(cmd) { const c = cmd.slice(); if (c.length > 1 && String(c[0]).toUpperCase() !== 'PING') c[1] = PFX + c[1]; return c; }
 async function redis(...cmd) {
+  cmd = pk(cmd);
   const r = await fetch(R_URL(), { method: 'POST', headers: { Authorization: 'Bearer ' + R_TOK(), 'Content-Type': 'application/json' }, body: JSON.stringify(cmd) });
   const j = await r.json();
   if (j.error) throw new Error('redis: ' + j.error);
@@ -24,7 +28,7 @@ async function redis(...cmd) {
 }
 async function pipe(cmds) {
   if (!cmds.length) return [];
-  const r = await fetch(R_URL().replace(/\/$/, '') + '/pipeline', { method: 'POST', headers: { Authorization: 'Bearer ' + R_TOK(), 'Content-Type': 'application/json' }, body: JSON.stringify(cmds) });
+  const r = await fetch(R_URL().replace(/\/$/, '') + '/pipeline', { method: 'POST', headers: { Authorization: 'Bearer ' + R_TOK(), 'Content-Type': 'application/json' }, body: JSON.stringify(cmds.map(pk)) });
   const j = await r.json();
   return j.map(x => { if (x.error) throw new Error('redis: ' + x.error); return x.result; });
 }
