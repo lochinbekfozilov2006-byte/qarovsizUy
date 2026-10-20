@@ -325,6 +325,30 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 #end .panel{max-height:100%;overflow-y:auto}
 @media (max-height:640px){#end h2{font-size:30px}#endText{display:none}#end .panel{gap:8px;padding:16px}.ecTop b{font-size:22px}}
 .fCard.code input{flex:1;min-width:0;font:600 17px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;padding:10px 12px;background:rgba(9,8,11,.7);border:1px solid var(--line);border-radius:4px;color:var(--fg)}.fCard.code button{background:var(--brass);border-color:var(--brass);color:#1a1408}.fCard.code{border-style:solid;border-color:rgba(217,180,106,.5)}
+
+#maps{display:flex;align-items:center;justify-content:center;background:rgba(9,8,11,.6)}
+.mapGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;overflow-y:auto;align-content:start;min-height:0}
+.mCard{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative;min-width:0}
+.mCard.sel{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok) inset}
+.mCard .pic{aspect-ratio:16/10;background:radial-gradient(circle at 50% 65%,#2a2230,#0c0b0e) center/cover;position:relative}
+.mCard.lock .pic{filter:grayscale(.55) brightness(.5)}
+.mCard .lk{position:absolute;left:8px;top:8px;padding:3px 7px;border-radius:3px;background:rgba(0,0,0,.72);font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted)}
+.mCard .info{padding:9px 10px 11px;display:flex;flex-direction:column;gap:7px;flex:1}
+.mCard .nm{font-size:18px;font-weight:700;line-height:1.15}
+.mCard .ds{font-size:12.5px;color:var(--muted);line-height:1.35;flex:1}
+.mCard .bar{height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}.mCard .bar i{display:block;height:100%;background:var(--ok)}
+.mCard button{height:38px;padding:0 8px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14.5px}
+.mCard button.on{border-color:var(--ok);background:rgba(143,191,122,.16);color:#b9e0a6}
+.mCard button.ad{background:var(--ok);border-color:var(--ok);color:#10140e;font-weight:700}
+.mCard button.buy{border-color:var(--brass);background:rgba(217,180,106,.14);color:#f0d69a}
+.mCard .tag{position:absolute;top:8px;right:8px;padding:3px 7px;border-radius:3px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.mCard .tag.vip{background:#7b4dd6;color:#fff}.mCard .tag.new{background:var(--blood);color:#fff}
+.rrow .mapT{font-size:11px;padding:2px 6px;border-radius:3px;background:rgba(143,191,122,.15);color:#b9e0a6;margin-left:6px}
+.chipI .dotc{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+.chipI.syr{border-color:#b02cff;color:#e2b8ff}
+#holyFlash.kill{background:radial-gradient(ellipse at center,rgba(200,120,255,.85),rgba(120,30,180,.4) 60%,rgba(60,0,90,0))}
+@media (max-width:900px){.mapGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-height:520px){.mapGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.mCard .pic{aspect-ratio:16/8}.mCard .ds{display:none}.mCard .nm{font-size:15px}.mCard button{height:34px;font-size:13px}}
 </style>
 </head>
 <body>
@@ -357,6 +381,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
     <div class="eb" data-i="main_menu">Bosh menyu</div>
     <h1>Qarovsiz <span>Uy</span></h1>
     <button id="mPlay" class="primary big"><span data-i="play">O'yinni boshlash</span><small data-i="play_sub"></small></button>
+    <button id="mMap"><span data-i="maps">Bazalar</span><small id="mapName"></small></button>
     <button id="mShop"><span data-i="shop">Do'kon</span><small class="coinTag"><svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><b id="menuCoins">0</b></small></button>
     <div class="row2 miniRow"><button id="mDaily" class="mini"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span data-i="daily"></span><i class="newDot" id="dailyDot" hidden></i></button><button id="mTg" class="mini tgB"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l12-9"/></svg><span data-i="tg_btn"></span><b>+150</b></button></div>
     <button id="mSettings"><span data-i="settings">Sozlamalar</span><small data-i="settings_sub"></small></button>
@@ -508,6 +533,14 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
   </div>
 </section>
 
+<section id="maps" class="screen" hidden>
+  <div class="shopWrap">
+    <div class="shopTop"><button id="mapsBack" class="sq" data-ia="back" aria-label="Orqaga">‹</button><div><div class="eb" data-i="maps_sub"></div><h2 data-i="maps"></h2></div><span class="grow"></span><div class="coinPill"><svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><b id="mapsCoins">0</b></div></div>
+    <div id="mapGrid" class="mapGrid"></div>
+    <p class="muted sm shopTip" id="mapsTip"></p>
+  </div>
+</section>
+
 <section id="daily" class="screen" hidden>
   <div class="panel dailyP">
     <div class="hdr"><div><div class="eb" data-i="daily_eb"></div><h2 data-i="daily"></h2></div><button class="link" id="dailyBack" data-i="back"></button></div>
@@ -555,7 +588,10 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 <script src="GLTFLoader.js"></script>
 <script src="SkeletonUtils.js"></script>
 <script src="peerjs.min.js"></script>
-<script src="world.js"></script>
+<script>/* pick the map before the world script loads: ?map=… or the last choice, if it is unlocked */
+(function(){var q=new URLSearchParams(location.search),m=q.get('map');if(m==null){try{m=localStorage.getItem('qu_map')}catch(e){}}if(m!=='hosp')m='house';
+ if(m==='hosp'&&!q.get('join')){try{var s=JSON.parse(localStorage.getItem('qu_econ')||'{}');if(!(s.admin||(s.maps&&s.maps.own&&s.maps.own.indexOf('hosp')>=0)))m='house'}catch(e){m='house'}}
+ window.MAP_ID=m;document.write('<script src="'+(m==='hosp'?'hospital.js':'world.js')+'"><\/script>')})();</script>
 <script src="actors.js"></script>
 <script src="audio.js"></script>
 <script src="i18n.js"></script>

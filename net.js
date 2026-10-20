@@ -37,7 +37,7 @@ N.scan=function(cb,onUpdate){const p=new Peer(opts());const found=[];let done=fa
  p.on('error',e=>{if(e.type==='peer-unavailable'){if(--pending<=0){clearTimeout(to);setTimeout(finish,300)}}else if(e.type!=='peer-unavailable'&&!p.open){clearTimeout(to);finish()}});
  p.on('open',()=>{for(let s=0;s<SLOTS;s++){const c=p.connect(PREFIX+'open-'+s,{metadata:{probe:1},reliable:true});
   c.on('open',()=>{c.send({t:'probe',ts:performance.now()})});
-  c.on('data',d=>{if(d&&d.t==='info'){found.push({slot:s,players:d.players||1,max:d.max||5,phase:d.phase,name:d.name||'?',lg:d.lg,ping:Math.round(performance.now()-d.ts)});if(onUpdate)onUpdate(found.slice());try{c.close()}catch(e){}if(--pending<=0){clearTimeout(to);setTimeout(finish,200)}}});
+  c.on('data',d=>{if(d&&d.t==='info'){found.push({slot:s,players:d.players||1,max:d.max||5,phase:d.phase,name:d.name||'?',lg:d.lg,map:d.map,ping:Math.round(performance.now()-d.ts)});if(onUpdate)onUpdate(found.slice());try{c.close()}catch(e){}if(--pending<=0){clearTimeout(to);setTimeout(finish,200)}}});
   c.on('error',()=>{})}})};
 N.join=function(code,cb){N.mode='client';const p=new Peer(opts());N.peer=p;let done=false;const to=setTimeout(()=>{if(!done){done=true;cb('timeout')}},16000);
  const target=/^O\d+$/.test(code)?PREFIX+'open-'+(+code.slice(1)-1):PREFIX+code;N.hostPeerId=target;N.code=code;N.open=/^O/.test(code);

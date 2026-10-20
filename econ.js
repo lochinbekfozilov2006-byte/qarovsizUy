@@ -7,18 +7,25 @@ const C={START:300,ENTRY:50,WIN:100,SOLO_WIN:30,AD_COINS:50,AD_DAILY:5,TG:150,TG
 const PRICE={char:{marlon:0,kate:0,boy:800,guard:1500},light:{warm:0,white:300,red:500,green:500}};
 const LIGHT_COLOR={warm:0xfff1d6,white:0xe8f2ff,red:0xff6a5a,green:0x9dff8a};
 const DAILY=[50,75,100,150,200,250,'light:green'];
+/* maps: 'house' is free, the hospital opens after 20 rewarded videos (or a purchase), two more are coming */
+const MAPS=[{id:'house',free:1},{id:'hosp',ads:20,price:'$1.99',sku:'map_hosp'},{id:'map3',coins:10000,soon:1},{id:'map4',vip:1,soon:1}];
 const PACKS=[{id:'coins_500',coins:500,price:'$0.99'},{id:'coins_1200',coins:1200,price:'$1.99',bonus:20},{id:'coins_3000',coins:3000,price:'$3.99',bonus:50,best:true}];
 
 function today(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function yesterday(){const d=new Date();d.setDate(d.getDate()-1);return today(d)}
 let s=null;
-function fresh(){return {coins:C.START,own:{char:['marlon','kate'],light:['warm']},light:'warm',daily:{n:0,last:''},ad:{day:'',n:0},tg:false,noads:false,admin:false}}
+function fresh(){return {coins:C.START,own:{char:['marlon','kate'],light:['warm']},light:'warm',daily:{n:0,last:''},ad:{day:'',n:0},tg:false,noads:false,admin:false,maps:{own:['house'],ads:{}},vip:false}}
 try{s=JSON.parse(localStorage.getItem(K)||'null')}catch(e){s=null}
-if(!s||typeof s.coins!=='number'){s=fresh()}else{const f=fresh();for(const k in f)if(s[k]==null)s[k]=f[k];s.own.char=s.own.char||f.own.char;s.own.light=s.own.light||f.own.light}
+if(!s||typeof s.coins!=='number'){s=fresh()}else{const f=fresh();for(const k in f)if(s[k]==null)s[k]=f[k];s.own.char=s.own.char||f.own.char;s.own.light=s.own.light||f.own.light;s.maps.own=s.maps.own||['house'];s.maps.ads=s.maps.ads||{}}
 const subs=[];
 function save(){try{localStorage.setItem(K,JSON.stringify(s))}catch(e){}subs.forEach(f=>{try{f()}catch(e){}})}
 
-const E=window.ECON={C,PRICE,LIGHT_COLOR,DAILY,PACKS,
+const E=window.ECON={C,PRICE,LIGHT_COLOR,DAILY,PACKS,MAPS,
+ mapOwned(id){const m=MAPS.find(x=>x.id===id);if(!m)return false;if(m.free||s.admin)return true;if(m.vip)return !!s.vip;return s.maps.own.includes(id)},
+ mapAds(id){return s.maps.ads[id]||0},
+ /* one finished rewarded video counts toward the map; returns true when it just unlocked */
+ mapAd(id){const m=MAPS.find(x=>x.id===id);if(!m||!m.ads||E.mapOwned(id))return false;s.maps.ads[id]=(s.maps.ads[id]||0)+1;let done=false;if(s.maps.ads[id]>=m.ads){s.maps.own.push(id);done=true}save();return done},
+ unlockMap(id){if(!s.maps.own.includes(id)){s.maps.own.push(id);save()}},
  get coins(){return s.admin?Infinity:s.coins},
  get admin(){return !!s.admin},
  /* ads that interrupt (between games) are off for admins and for "Reklamasiz" buyers */
