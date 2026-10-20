@@ -68,7 +68,7 @@ input{font:500 18px var(--f-ui);color:var(--fg);background:rgba(0,0,0,.35);borde
 #setup,#lobby,#end{display:flex;align-items:center;justify-content:center}
 #setup .panel,#lobby .panel,#end .panel{width:min(480px,100%);display:flex;flex-direction:column;gap:14px;max-height:100%;overflow:auto}
 label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-#chars{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#chars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .charCard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px;text-transform:none;letter-spacing:0}
 .charCard img{width:100%;aspect-ratio:3/4;object-fit:contain;background:#16121a;border-radius:3px}
 .charCard[aria-pressed="true"]{border-color:var(--blood);background:var(--blood-soft)}
@@ -239,6 +239,91 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 @media (max-width:900px){#heroShow{width:30vw}.lobbyWrap{flex-direction:column;height:100%}.lchat{min-height:200px}.setGrid{grid-template-columns:1fr}.setGrid .bl{padding-left:0;border-left:none}}
 @media (max-height:520px){.side .panel{gap:8px}.side button{padding:10px 14px;font-size:16px}button.card .d{display:none}#heroName{font-size:24px}.lobbyWrap{height:100%}#lobbyList li{height:36px;font-size:15px}#lobbyList li img{height:32px}#lobbyList{gap:5px}#lobbyCode{font-size:34px}.codeRow p{display:none}
  .lobbyWrap{flex-direction:row;gap:10px}.lchat{min-height:0}.lmain{flex:1.5;gap:6px;padding-top:12px;padding-bottom:12px}.lmain h2{font-size:20px}.lmain .badges .badge{font-size:12px;padding:3px 8px}.lmain .vbtn{width:30px;height:30px}.lmain .lfoot button{padding:8px 14px;font-size:15px}}
+
+/* ---------- coins, shop, daily, telegram, revive, ads ---------- */
+.coin{width:18px;height:18px;fill:none;stroke:var(--brass);stroke-width:2;flex:none}
+.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;flex:none}
+.grow{flex:1;min-width:0}
+.coinTag{display:inline-flex;align-items:center;gap:6px;color:var(--fg)!important;font-size:15px}
+#menu .miniRow{gap:8px}#menu .miniRow button.mini{flex:1;font-size:15px;padding:10px 12px;gap:8px;justify-content:flex-start;position:relative}
+#menu button.tgB{border-color:rgba(42,171,238,.55);color:#cfeeff}#menu button.tgB .ico{stroke:#5cc4f5}#menu button.tgB b{margin-left:auto;color:#b9e0a6}
+.newDot{position:absolute;top:7px;right:8px;width:9px;height:9px;border-radius:50%;background:#ff7b63;box-shadow:0 0 0 3px rgba(255,123,99,.25)}
+.coinPill{display:flex;align-items:center;gap:8px;height:44px;padding:0 16px;border:1px solid rgba(217,180,106,.45);border-radius:999px;background:rgba(20,17,20,.85);font-size:19px}
+#shop{display:flex;align-items:center;justify-content:center;background:rgba(9,8,11,.55)}
+.shopWrap{width:min(980px,100%);height:min(600px,100%);display:flex;flex-direction:column;gap:12px}
+.shopTop{display:flex;align-items:center;gap:14px}.shopTop h2{font-size:32px;line-height:1}
+.shopBody{flex:1;min-height:0;display:flex;gap:14px}
+.shopTabs{width:170px;display:flex;flex-direction:column;gap:8px;flex:none}
+.shopTabs button{text-align:left;background:rgba(20,17,20,.85);font-size:16px;padding:14px}
+.shopTabs button[aria-pressed="true"]{background:var(--blood);border-color:var(--blood);color:#fff}
+.shopTabs button.gold{color:var(--brass);border-color:rgba(217,180,106,.5)}.shopTabs button.gold[aria-pressed="true"]{color:#1a1408;background:var(--brass);border-color:var(--brass)}
+.shopGrid{flex:1;min-width:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;overflow-y:auto;align-content:start}
+.sCard{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;min-height:250px;position:relative}
+.sCard.sel{border-color:var(--ok)}.sCard.paid{border-color:rgba(217,180,106,.45)}.sCard.rare{border-color:rgba(184,64,44,.65)}
+.sCard .pic{flex:1;min-height:120px;display:flex;align-items:flex-end;justify-content:center;background:radial-gradient(circle at 50% 80%,rgba(236,227,212,.1),transparent 70%)}
+.sCard .pic img{height:100%;max-height:200px;width:100%;object-fit:contain}
+.sCard .sw{width:74px;height:74px;border-radius:50%;margin:auto;box-shadow:0 0 40px 6px var(--c);background:radial-gradient(circle,#fff 0,var(--c) 45%,transparent 72%)}
+.sCard .info{padding:8px 10px 10px;display:flex;flex-direction:column;gap:6px}
+.sCard .nm{display:flex;justify-content:space-between;align-items:baseline;gap:6px}.sCard .nm b{font-size:17px}.sCard .nm span{font-size:12px;color:var(--muted)}
+.sCard .tag{position:absolute;top:8px;left:8px;padding:3px 7px;border-radius:3px;background:var(--blood);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;z-index:1}
+.sCard button{height:38px;padding:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:15px}
+.sCard button.on{border-color:var(--ok);background:rgba(143,191,122,.16);color:#b9e0a6}
+.sCard button.buy{border-color:var(--brass);background:rgba(217,180,106,.14);color:#f0d69a}
+.pCard{display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:14px 12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;position:relative;min-height:170px}
+.pCard.best{border-color:var(--brass)}.pCard .big{font-size:28px;font-weight:700;line-height:1}.pCard .coin{width:38px;height:38px;stroke-width:1.6}
+.pCard .bestTag{position:absolute;top:-9px;left:10px;padding:2px 7px;border-radius:3px;background:var(--brass);color:#1a1408;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.pCard button{flex:none;height:44px;padding:0;justify-content:center;font-size:17px;border-color:var(--brass);color:#f0d69a;background:rgba(217,180,106,.14)}.pCard.best button{background:var(--brass);color:#1a1408}
+.oCard{grid-column:span 2;display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:8px;border:1px solid rgba(184,64,44,.7);background:rgba(184,64,44,.16)}
+.oCard.vip{border-color:rgba(217,180,106,.7);background:rgba(217,180,106,.12)}.oCard p{margin:3px 0 0;font-size:13px;color:#d7c8b4;line-height:1.3}
+.oCard button{flex:none;padding:12px 14px;background:var(--blood);border-color:var(--blood);color:#fff;font-size:17px}.oCard.vip button{background:var(--brass);border-color:var(--brass);color:#1a1408}
+.fCard{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;border:1px dashed rgba(143,191,122,.6);background:var(--panel)}
+.fCard .ico{stroke:var(--ok)}.fCard button{padding:10px 18px;background:var(--ok);border-color:var(--ok);color:#10170c}.fCard.tg{border-color:rgba(42,171,238,.6);border-style:solid}.fCard.tg .ico{stroke:#5cc4f5}.fCard.tg button{background:#2aabee;border-color:#2aabee;color:#06263a}
+.shopTip{margin:0}
+.dailyP{width:min(720px,100%);display:flex;flex-direction:column;gap:14px}
+#daily,#tg,#nocoins{display:flex;align-items:center;justify-content:center;background:rgba(9,8,11,.5)}
+.dailyGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.dCell{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:6px;border:1px solid var(--line);background:rgba(20,17,20,.8)}
+.dCell .coin{width:28px;height:28px;stroke-width:1.8}.dCell b{font-size:17px}.dCell small{font-size:12px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}.dCell em{font-style:normal;font-size:12px;font-weight:600;min-height:15px;color:var(--muted)}
+.dCell.done{border-color:rgba(143,191,122,.45);background:rgba(143,191,122,.08);opacity:.75}.dCell.done em{color:#b9e0a6}
+.dCell.now{border:2px solid var(--blood);background:rgba(184,64,44,.22)}.dCell.now em{color:#ff9a85}
+.dCell.gift{border-color:var(--brass);background:rgba(217,180,106,.12)}.dCell.gift em{color:var(--brass)}
+.dRow #daily2x{flex:1;justify-content:center;gap:10px}.dRow button{padding:14px 18px}
+.tgP{width:min(640px,100%);display:flex;flex-direction:column;gap:12px;border-color:rgba(42,171,238,.55)}
+.tgHead{display:flex;align-items:center;gap:14px}.tgHead h2{font-size:28px;line-height:1.05}
+.tgLogo{width:56px;height:56px;border-radius:50%;background:#2aabee;display:flex;align-items:center;justify-content:center;flex:none}.tgLogo .ico{width:30px;height:30px;stroke:#fff}
+.tgEb{color:#5cc4f5}.plusPill{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(143,191,122,.14);border:1px solid rgba(143,191,122,.6);font-size:20px;color:#b9e0a6}.plusPill .coin{stroke:#b9e0a6}
+.tgStep{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:6px;border:1px solid var(--line);background:rgba(20,17,20,.6)}
+.tgStep .num{width:28px;height:28px;border-radius:50%;border:2px solid #5cc4f5;color:#5cc4f5;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none;box-sizing:border-box}
+.tgStep.ok{border-color:rgba(143,191,122,.45);background:rgba(143,191,122,.08)}.tgStep.ok .num{background:var(--ok);border-color:var(--ok);color:#10170c}
+.tgStep.act{border:2px solid #2aabee;background:rgba(42,171,238,.1)}
+.tgOpen{padding:9px 14px;background:#2aabee;border-color:#2aabee;color:#06263a}
+#tgClaim{justify-content:center}#tgClaim:disabled{opacity:.45;cursor:default}
+.ncP{width:min(520px,100%);display:flex;flex-direction:column;gap:10px}
+.ways{display:flex;flex-direction:column;gap:8px}.way{display:flex;align-items:center;gap:10px;text-align:left;font-size:16px;padding:13px 14px}.way b{color:#b9e0a6}.way b.gold{color:var(--brass)}.way.tgW{border-color:rgba(42,171,238,.6);background:rgba(42,171,238,.1)}.way.tgW .ico{stroke:#5cc4f5}
+.endCoins{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:6px;border:1px solid rgba(217,180,106,.45);background:rgba(20,17,20,.7)}
+.ecTop{display:flex;align-items:center;gap:10px}.ecTop .coin{width:30px;height:30px}.ecTop b{font-size:28px}.endCoins.lose{border-color:rgba(184,64,44,.55)}.endCoins.lose b{color:#ff9a85}.endCoins.lose .coin{stroke:#ff9a85}.endCoins.win b{color:#b9e0a6}
+.goldB{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--brass);border-color:var(--brass);color:#1a1408;font-size:16px}.goldB.green{background:var(--ok);border-color:var(--ok);color:#10170c}.goldB:disabled{opacity:.5}
+#reviveBox{position:absolute;inset:0;z-index:30;pointer-events:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;background:radial-gradient(ellipse at center,rgba(40,5,4,.88) 0%,rgba(20,2,2,.97) 78%)}
+#reviveBox h2{font-size:clamp(34px,6vw,52px);color:#ff7b63}#reviveBox p{margin:0;font-size:17px;color:#e6d6c2}#reviveBox small{font-size:13px;color:#c9b9a3}
+.revRow{display:flex;align-items:center;gap:18px}.revCount{width:74px;height:74px;border-radius:50%;border:3px solid #ff7b63;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;box-sizing:border-box;background:rgba(9,8,11,.6);flex:none}
+.revBtns{display:flex;flex-direction:column;gap:8px;width:min(380px,60vw)}.revBtns button{display:flex;align-items:center;justify-content:center;gap:10px}#revYes{font-size:18px;padding:16px}
+#adDemo{position:fixed;inset:0;z-index:40;background:#000;color:#fff;font-family:var(--f-ui)}
+#adDemo .adBox{position:absolute;inset:52px 56px 64px;border:2px dashed rgba(255,255,255,.28);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px;background:repeating-linear-gradient(135deg,#111 0 14px,#161616 14px 28px)}
+#adDemo .adBox span{max-width:440px;color:rgba(255,255,255,.65);line-height:1.35}.adIco{width:54px;height:54px;fill:none;stroke:rgba(255,255,255,.55);stroke-width:1.6;stroke-linejoin:round}
+#adDemo .adTL{position:absolute;top:12px;left:14px;display:flex;align-items:center;gap:8px;font-weight:600}.adChip{padding:4px 9px;border-radius:4px;background:#f2c94c;color:#1a1408;font-size:13px;font-weight:700}
+#adDemo .adTR{position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.75)}#adDemo .adTR button{width:40px;height:40px;padding:0;border-radius:50%;font-size:20px;color:#fff;justify-content:center}#adDemo .adTR button:disabled{opacity:.35}
+#adDemo .adBar{position:absolute;left:16px;right:16px;bottom:24px;height:6px;border-radius:3px;background:rgba(255,255,255,.15);overflow:hidden}#adDemo .adBar i{display:block;height:100%;width:0;background:var(--ok)}
+.charCard{position:relative}.charCard .lockTag{position:absolute;top:8px;right:8px;display:flex;align-items:center;gap:4px;padding:3px 7px;border-radius:3px;background:rgba(9,8,11,.85);border:1px solid rgba(217,180,106,.6);color:#f0d69a;font-size:12px;font-weight:700}.charCard .lockTag .coin{width:13px;height:13px}.charCard.locked img{filter:grayscale(.6) brightness(.6)}
+.admTag{margin-left:6px;padding:1px 6px;border-radius:3px;background:var(--brass);color:#1a1408;font-size:10px;font-weight:700;letter-spacing:.1em;font-style:normal}
+@media (max-width:900px) and (min-height:521px){.shopGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-height:520px){.shopWrap{gap:8px}.shopTop h2{font-size:24px}.shopTop .eb{display:none}.coinPill{height:38px;font-size:17px}.shopTabs{width:132px}.shopTabs button{padding:11px 12px;font-size:15px}.shopGrid.tall{grid-auto-rows:100%}.sCard .pic{min-height:0}.sCard .pic img{max-height:none}.pCard{min-height:150px;padding:10px}.oCard{padding:10px 12px}.oCard p{font-size:12px}.pCard .big{font-size:22px}.pCard .coin{width:28px;height:28px}.shopTip{display:none}
+ .dailyP{gap:10px;padding:14px}.dCell{padding:8px 2px}.dCell .coin{width:22px;height:22px}.dRow button{padding:11px 14px}.tgP{gap:9px;padding:14px}.tgHead h2{font-size:22px}.tgLogo{width:44px;height:44px}.ncP{gap:8px;padding:14px}.way{padding:10px 12px}
+ #menu .miniRow button.mini{padding:9px 10px;font-size:14px}#menu .foot{display:none}#reviveBox{gap:8px}.revCount{width:60px;height:60px;font-size:28px}#revYes{padding:13px}}
+
+.shopGrid{padding-top:10px}.pCard.free{border-style:dashed;border-color:rgba(143,191,122,.6)}.pCard.free .ico{width:38px;height:38px;stroke:var(--ok);stroke-width:1.6}.pCard.free .big{color:#b9e0a6}.pCard.free button{background:var(--ok);border-color:var(--ok);color:#10170c}.pCard button:disabled{opacity:.45}
+.dRow #daily2x{display:flex;align-items:center}
+#end .panel{max-height:100%;overflow-y:auto}
+@media (max-height:640px){#end h2{font-size:30px}#endText{display:none}#end .panel{gap:8px;padding:16px}.ecTop b{font-size:22px}}
 </style>
 </head>
 <body>
@@ -271,6 +356,8 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
     <div class="eb" data-i="main_menu">Bosh menyu</div>
     <h1>Qarovsiz <span>Uy</span></h1>
     <button id="mPlay" class="primary big"><span data-i="play">O'yinni boshlash</span><small data-i="play_sub"></small></button>
+    <button id="mShop"><span data-i="shop">Do'kon</span><small class="coinTag"><svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><b id="menuCoins">0</b></small></button>
+    <div class="row2 miniRow"><button id="mDaily" class="mini"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span data-i="daily"></span><i class="newDot" id="dailyDot" hidden></i></button><button id="mTg" class="mini tgB"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l12-9"/></svg><span data-i="tg_btn"></span><b>+150</b></button></div>
     <button id="mSettings"><span data-i="settings">Sozlamalar</span><small data-i="settings_sub"></small></button>
     <div class="foot"><span data-i="menu_foot"></span><span id="langFoot"></span></div>
   </div>
@@ -308,6 +395,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
       <button class="charCard" data-c="marlon" aria-pressed="true"><img id="thumb_marlon" alt="Marlon"><span>Marlon</span></button>
       <button class="charCard" data-c="boy" aria-pressed="false"><img id="thumb_boy" alt="Bola"><span class="cn" data-c="boy">Bola</span></button>
       <button class="charCard" data-c="kate" aria-pressed="false"><img id="thumb_kate" alt="Kate"><span>Kate</span></button>
+      <button class="charCard" data-c="guard" aria-pressed="false"><img id="thumb_guard" alt="Qorovul"><span>Qorovul</span></button>
     </div>
     <div class="err" id="setupErr" role="alert"></div>
     <div class="row"><button id="setupBack" data-i="back_btn">Orqaga</button><button id="setupGo" class="primary" data-i="cont">Davom etish</button></div>
@@ -382,6 +470,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
   <div id="hideVeil" hidden><span data-i="you_hidden">Yashiringansiz</span></div>
   <div id="holyFlash" hidden></div>
   <div id="redFlash" hidden></div>
+  <div id="reviveBox" hidden><h2 data-i="revive_t"></h2><p data-i="revive_x"></p><div class="revRow"><div class="revCount" id="revCount">8</div><div class="revBtns"><button id="revYes" class="primary"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg><span data-i="revive_btn"></span></button><button id="revNo" data-i="revive_no"></button></div></div><small data-i="revive_note"></small></div>
   <div id="deadMsg" hidden><h2 data-i="caught_you">Sizni ushlab oldi</h2><span class="muted"><span data-i="watching"></span> <b id="deadWho"></b></span><button id="deadNext" data-i="next_player">Boshqa o'yinchi</button></div>
 </section>
 
@@ -403,9 +492,61 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
     <p id="endText" class="muted" style="margin:0;line-height:1.5"></p>
     <p id="endTime" class="eb" style="margin:0"></p>
     <ul id="endList"></ul>
+    <div id="endCoins" class="endCoins" hidden><div class="ecTop"><svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><b id="ecAmt"></b><span id="ecBal" class="muted"></span></div><span id="ecNote" class="muted sm"></span><button id="ecAd" class="goldB"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg><span id="ecAdT"></span></button></div>
     <button id="endBack" class="primary" data-i="to_menu">Bosh menyuga</button>
   </div>
 </section>
+<section id="shop" class="screen" hidden>
+  <div class="shopWrap">
+    <div class="shopTop"><button id="shopBack" class="sq" data-ia="back" aria-label="Orqaga">‹</button><div><div class="eb" data-i="shop_sub"></div><h2 data-i="shop"></h2></div><span class="grow"></span><div class="coinPill"><svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><b id="shopCoins">0</b></div></div>
+    <div class="shopBody">
+      <nav class="shopTabs" aria-label="Do'kon"><button data-tab="chars" data-i="tab_chars"></button><button data-tab="lights" data-i="tab_lights"></button><button data-tab="packs" data-i="tab_packs" class="gold"></button></nav>
+      <div id="shopGrid" class="shopGrid"></div>
+    </div>
+    <p class="muted sm shopTip" id="shopTip"></p>
+  </div>
+</section>
+
+<section id="daily" class="screen" hidden>
+  <div class="panel dailyP">
+    <div class="hdr"><div><div class="eb" data-i="daily_eb"></div><h2 data-i="daily"></h2></div><button class="link" id="dailyBack" data-i="back"></button></div>
+    <div id="dailyGrid" class="dailyGrid"></div>
+    <div class="row2 dRow"><button id="dailyClaim"></button><button id="daily2x" class="primary"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg><span id="daily2xT"></span></button></div>
+    <p class="muted sm" data-i="daily_note" style="margin:0"></p>
+  </div>
+</section>
+
+<section id="tg" class="screen" hidden>
+  <div class="panel tgP">
+    <div class="tgHead"><div class="tgLogo"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l12-9"/></svg></div><div class="grow"><div class="eb tgEb" data-i="tg_eb"></div><h2 data-i="tg_t"></h2></div><div class="plusPill"><svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><b>+150</b></div></div>
+    <p class="muted" data-i="tg_d" style="margin:0"></p>
+    <div class="tgStep" id="tgS1"><span class="num">1</span><span class="grow" data-i="tg_s1"></span><button id="tgOpen" class="tgOpen" data-i="tg_open"></button></div>
+    <div class="tgStep" id="tgS2"><span class="num">2</span><span class="grow" id="tgS2t"></span></div>
+    <div class="row2"><button id="tgLater" data-i="tg_later"></button><button id="tgClaim" class="primary grow"></button></div>
+    <small class="muted" data-i="tg_once"></small>
+  </div>
+</section>
+
+<section id="nocoins" class="screen" hidden>
+  <div class="panel ncP">
+    <div class="eb" data-i="entry_t"></div><h2 data-i="no_coins_t"></h2>
+    <p id="ncText" class="muted" style="margin:0"></p>
+    <div class="ways">
+      <button id="wTg" class="way tgW"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l12-9"/></svg><span class="grow" data-i="way_tg"></span><b>+150</b></button>
+      <button id="wAd" class="way"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg><span class="grow" data-i="way_ad"></span><b>+50</b></button>
+      <button id="wDaily" class="way"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span class="grow" data-i="way_daily"></span><b>50–250</b></button>
+      <button id="wShop" class="way"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg><span class="grow" data-i="way_shop"></span><b class="gold">$0.99</b></button>
+    </div>
+    <button class="link" id="ncBack" data-i="back"></button>
+  </div>
+</section>
+
+<div id="adDemo" hidden>
+  <div class="adBox"><svg class="adIco" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg><b data-i="ad_sample"></b><span data-i="ad_sample_x"></span></div>
+  <div class="adTL"><span class="adChip" data-i="ad_label"></span><span data-ad-left>0:05</span></div>
+  <div class="adTR"><span data-i="ad_wait"></span><button data-ad-close aria-label="Yopish">×</button></div>
+  <div class="adBar"><i data-ad-bar></i></div>
+</div>
 <div id="toast" hidden></div>
 
 <script src="three.min.js"></script>
@@ -420,6 +561,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 <script src="config.js"></script>
 <script src="net.js"></script>
 <script src="voice.js"></script>
+<script src="econ.js"></script>
 <script src="game.js"></script>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'&&!window.Capacitor){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script>
 </body>
