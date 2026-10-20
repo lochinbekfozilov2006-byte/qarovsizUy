@@ -154,6 +154,17 @@ button.link:hover{color:var(--fg)}button.link.gold{color:var(--brass);align-self
 .row2{display:flex;gap:8px;align-items:center}.row2.al{gap:16px}
 .sq{width:46px;height:46px;padding:0!important;display:flex!important;align-items:center;justify-content:center!important;background:rgba(14,11,13,.72);font-size:22px}
 .sq svg{width:20px;height:20px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.roomsAct{display:flex;gap:10px;margin-top:14px}.roomsAct #roomsOwn{flex:1;font-size:18px;padding:14px}.roomsAct #roomsRefresh{padding:14px 18px}
+.roomsHint{margin:8px 0 0}
+.lchatHdr{align-items:center}
+.micTog{display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:14px;border-radius:999px}
+.micTog svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round}
+.micTog.on{color:#0e0b0d;background:var(--ok);border-color:var(--ok)}.micTog.off{color:#ff8a72}
+.vbtn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border-radius:50%;flex:none}
+.vbtn svg{width:17px;height:17px;stroke:#bdb2a0;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.vbtn.on svg{stroke:var(--ok)}.vbtn.muted svg,.vbtn.off svg{stroke:#ff8a72}.vbtn.muted{border-color:#ff8a72}
+#plist li[data-mute]{pointer-events:auto;cursor:pointer}#plist li.muted{opacity:.6}#plist li .mx{color:#ff8a72}
+.pvRow{display:flex;align-items:center;gap:8px}.pvRow .sl{flex:1}
 .flag{display:inline-block;width:18px;height:12px;vertical-align:-1px;margin-right:6px;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.25);flex:none}
 .srvPing{position:fixed;right:max(24px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:4px;background:rgba(14,11,13,.8);border:1px solid var(--line);font-size:14px;z-index:6}
 .pdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted)}.pdot.g{background:var(--ok)}.pdot.y{background:var(--brass)}.pdot.r{background:#e0735f}
@@ -175,7 +186,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 .foot2{border-top:1px solid rgba(236,227,212,.12);padding-top:8px;font-size:15px;flex-wrap:wrap}
 .lobbyWrap{display:flex;gap:16px;width:min(1100px,100%);height:min(560px,100%)}
 #lobby{display:flex;align-items:center;justify-content:center}
-.lmain{flex:1.4;display:flex;flex-direction:column;gap:10px;overflow:auto}.lchat{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.lmain{flex:1.4;display:flex;flex-direction:column;gap:10px;overflow:hidden;min-height:0}.lmain #lobbyList{flex:1 1 auto;min-height:0;overflow-y:auto}#lobbyList li{flex:none}.lmain>.hdr,.lmain>.codeRow{flex:none}.lchat{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
 .badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .badge{padding:6px 10px;border-radius:3px;border:1px solid var(--line);font-size:14px}.badge.ok{background:rgba(143,191,122,.16);border-color:transparent;color:#a9d595;font-weight:600}.badge.lock{background:rgba(217,180,106,.14);border-color:transparent;color:var(--brass);font-weight:600}
 #lobbyCode{font-size:clamp(40px,8vw,56px)}
@@ -226,7 +237,8 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 .touch #micWrap{right:auto;left:50%;transform:translateX(120px);bottom:calc(env(safe-area-inset-bottom) + 26px)}
 #obj li.opt{color:var(--muted);font-size:13px}#obj li.opt.ok{color:var(--brass);text-decoration:none}
 @media (max-width:900px){#heroShow{width:30vw}.lobbyWrap{flex-direction:column;height:100%}.lchat{min-height:200px}.setGrid{grid-template-columns:1fr}.setGrid .bl{padding-left:0;border-left:none}}
-@media (max-height:520px){.side .panel{gap:8px}.side button{padding:10px 14px;font-size:16px}button.card .d{display:none}#heroName{font-size:24px}.lobbyWrap{height:100%}#lobbyList li{height:40px}#lobbyCode{font-size:34px}.codeRow p{display:none}}
+@media (max-height:520px){.side .panel{gap:8px}.side button{padding:10px 14px;font-size:16px}button.card .d{display:none}#heroName{font-size:24px}.lobbyWrap{height:100%}#lobbyList li{height:36px;font-size:15px}#lobbyList li img{height:32px}#lobbyList{gap:5px}#lobbyCode{font-size:34px}.codeRow p{display:none}
+ .lobbyWrap{flex-direction:row;gap:10px}.lchat{min-height:0}.lmain{flex:1.5;gap:6px;padding-top:12px;padding-bottom:12px}.lmain h2{font-size:20px}.lmain .badges .badge{font-size:12px;padding:3px 8px}.lmain .vbtn{width:30px;height:30px}.lmain .lfoot button{padding:8px 14px;font-size:15px}}
 </style>
 </head>
 <body>
@@ -308,7 +320,8 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
     <div class="hdr"><div><div class="eb" data-i="rooms_eb"></div><h2 data-i="rooms_title"></h2></div><button id="roomsQuick" class="primary" data-i="quick_join" disabled></button></div>
     <div class="rhead"><span data-i="col_host"></span><span data-i="col_players"></span><span data-i="col_ping"></span><span data-i="col_state"></span><span></span></div>
     <div id="roomList"></div>
-    <div class="hdr foot2"><span class="muted" data-i="rooms_hint"></span><button class="link gold" id="roomsOwn" data-i="own_open"></button></div>
+    <div class="roomsAct"><button id="roomsRefresh" data-i="refresh"></button><button id="roomsOwn" class="primary" data-i="own_open"></button></div>
+    <p class="muted sm roomsHint" data-i="rooms_hint"></p>
   </div>
 </section>
 
@@ -322,7 +335,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
       <div class="hdr lfoot"><span class="muted"><span id="lobbyCount"></span> · <span id="lobbyNeed" data-i="need2"></span><span id="lobbyWait" hidden data-i="wait_host"></span></span>
         <div class="row2"><button id="lobbyLeave" data-i="leave">Chiqish</button><button id="lobbyStart" class="primary" disabled data-i="start">Boshlash</button></div></div>
     </div>
-    <div class="panel lchat"><div class="eb" data-i="chat">Chat</div><div class="chatLog" id="lobbyChat"></div>
+    <div class="panel lchat"><div class="hdr lchatHdr"><div class="eb" data-i="chat">Chat</div><button id="lobbyMic" class="micTog off"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span id="lobbyMicLbl"></span></button></div><div class="chatLog" id="lobbyChat"></div>
       <form class="chatForm" data-chat><input maxlength="120" autocomplete="off" enterkeyhint="send" data-ip="chat_ph"><button aria-label="Yuborish" data-ia="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form></div>
   </div>
 </section>
