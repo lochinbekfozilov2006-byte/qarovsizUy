@@ -283,7 +283,7 @@ function hostInitState(){const kSpot=Math.floor(Math.random()*W.KEY.length);let 
 let hostT=null;
 function startGame(s){endShown=false;applyState(s);ST.phase='play';ST.t=0;show('hud');$('#pad').hidden=!TOUCH;
  const ids=Object.keys(ST.players);const idx=Math.max(0,ids.indexOf(me.id));P.pos.set(-2+idx*1,0,87);P.yaw=0;P.pitch=0;P.alive=true;P.hide=-1;P.inCar=false;P.fl=true;P.stamina=1;flash.intensity=2.6;flash.color.setHex(EC.LIGHT_COLOR[EC.light]||0xfff1d6);
- match={mode:N.mode,paid:0,revUsed:false,endAd:false};if(N.mode!=='solo'){match.paid=EC.spend(EC_C.ENTRY);if(match.paid)setTimeout(()=>toast(T('paid_entry',{e:match.paid}),3000),9000)}
+ match={mode:N.mode,paid:0,revUsed:false,endAd:false};SRV.ev('game',N.mode!=='solo');if(N.mode!=='solo'){match.paid=EC.spend(EC_C.ENTRY);if(match.paid)setTimeout(()=>toast(T('paid_entry',{e:match.paid}),3000),9000)}
  ids.forEach(id=>{if(id!==me.id)remoteFor(id)});
  const online=N.mode!=='solo';$('#hudChat').hidden=!online;$('#micWrap').hidden=!online;$('#hudChat').classList.toggle('mini',TOUCH);renderMic();
  if(online){VC.sync(ids,me.id);if(!VC.on||VC.denied)setTimeout(()=>toast(T('mic_off_hint'),4000),2500)}
@@ -686,6 +686,7 @@ function renderShop(){document.querySelectorAll('.shopTabs [data-tab]').forEach(
    +'<div class="oCard"><div class="grow"><b>'+T('noads_t')+'</b><p>'+T('noads_d')+'</p></div><button data-act="noads"'+(EC.noAds()?' disabled':'')+'>'+(EC.noAds()?'✓':'$1.99')+'</button></div>'
    +'<div class="oCard vip"><div class="grow"><b>'+T('vip_t')+'</b><p>'+T('vip_d')+'</p></div><button data-act="vip">$2.99</button></div>'
 
+   +'<div class="fCard code"><input id="giftIn" maxlength="12" autocomplete="off" placeholder="'+esc(T('code_ph'))+'"><button data-act="code">'+T('code_btn')+'</button></div>'
    +(EC.tgDone?'':'<div class="fCard tg">'+TG_SVG+'<span class="grow">'+T('tg_t')+' · <b style="color:#b9e0a6">+'+EC_C.TG+'</b></span><button data-act="tg">'+T('tg_open')+'</button></div>')}
  $('#shopGrid').innerHTML=h;$('#shopGrid').classList.toggle('tall',shopTab!=='packs');$('#shopGrid').scrollTop=0}
 $('#shopGrid').addEventListener('click',e=>{const b=e.target.closest('button[data-act]');if(!b||b.disabled)return;const a=b.dataset.act,id=b.dataset.id;
@@ -696,6 +697,7 @@ $('#shopGrid').addEventListener('click',e=>{const b=e.target.closest('button[dat
  else if(a==='sell'){EC.setLight(id);renderShop()}
  else if(a==='pack'||a==='noads'||a==='vip')toast(T('iap_soon'),3500);
  else if(a==='freead')adCoins();
+ else if(a==='code'){const v=($('#giftIn').value||'').trim();if(!v)return;b.disabled=true;SRV.redeem(v).then(j=>{b.disabled=false;if(j.ok){S.pickup&&S.pickup();toast(T('code_ok',{n:j.coins}),3500);$('#giftIn').value=''}else toast(T(j.error==='already'?'code_used':j.error==='used_up'?'code_over':j.error==='net'||j.error==='not_configured'?'srv_off':'code_bad'),3500)})}
  else if(a==='tg')openTg('shop')});
 function adCoins(){if(EC.adsLeft()<=0){toast(T('ads_over'));return}ADS.rewarded().then(ok=>{if(ok){EC.noteAdCoins();EC.add(EC_C.AD_COINS);toast(T('got_coins',{n:EC_C.AD_COINS}))}else toast(T('ad_fail'))})}
 /* daily bonus */
@@ -714,10 +716,13 @@ $('#daily2x').onclick=()=>{if(!EC.daily().can)return;ADS.rewarded().then(ok=>{if
 /* Telegram channel (+150 once). The bot will confirm the subscription later; for now opening the channel is enough. */
 function openTg(from){tgFrom=from||(curScreen!=='tg'?curScreen:'menu');show('tg');renderTg()}
 $('#mTg').onclick=()=>openTg('menu');$('#tgLater').onclick=()=>show(tgFrom);
-function renderTg(){const done=EC.tgDone;$('#tgS1').className='tgStep'+(tgOpened||done?' ok':' act');$('#tgS2').className='tgStep'+(done?' ok':tgOpened?' act':'');
- $('#tgS2t').textContent=T('tg_s2',{n:EC_C.TG});$('#tgClaim').disabled=done||!tgOpened;$('#tgClaim').textContent=done?T('tg_done',{n:EC_C.TG}):T('tg_check',{n:EC_C.TG})}
+function renderTg(){const done=EC.tgDone,bot=SRV.botLink();$('#tgS1').className='tgStep'+(tgOpened||done?' ok':' act');$('#tgS2').className='tgStep'+(done?' ok':tgOpened?' act':'');
+ $('#tgS2t').textContent=bot?T('tg_s2b',{n:EC_C.TG}):T('tg_s2',{n:EC_C.TG});$('#tgBot').hidden=!bot||done;$('#tgBot').textContent=T('tg_botbtn');
+ $('#tgClaim').disabled=done||(!bot&&!tgOpened);$('#tgClaim').textContent=done?T('tg_done',{n:EC_C.TG}):bot?T('tg_verify'):T('tg_check',{n:EC_C.TG})}
+$('#tgBot').onclick=()=>{const u=SRV.botLink();if(u){try{window.open(u,'_blank')}catch(e){}tgOpened=true;setTimeout(renderTg,500)}};
 $('#tgOpen').onclick=()=>{try{window.open(EC_C.TG_URL,'_blank')}catch(e){}setTimeout(()=>{tgOpened=true;renderTg()},800)};
-$('#tgClaim').onclick=()=>{if(!tgOpened){toast(T('tg_first'));return}if(EC.claimTg()){toast(T('tg_done',{n:EC_C.TG}),3000);S.pickup&&S.pickup();renderTg();setTimeout(()=>show(tgFrom),900)}};
+$('#tgClaim').onclick=()=>{if(SRV.botLink()){$('#tgClaim').disabled=true;SRV.sync().then(j=>{renderTg();if(EC.tgDone){const got=((j&&j.grants)||[]).some(g=>g.kind==='tg'&&g.coins>0);if(!got)toast(T('tg_already'),3000);setTimeout(()=>show(tgFrom),1200)}else{$('#tgClaim').disabled=false;toast(T('tg_notyet'),4000)}});return}
+ if(!tgOpened){toast(T('tg_first'));return}if(EC.claimTg()){toast(T('tg_done',{n:EC_C.TG}),3000);S.pickup&&S.pickup();renderTg();setTimeout(()=>show(tgFrom),900)}};
 /* not enough coins for an online game */
 function openNoCoins(){show('nocoins');$('#ncText').textContent=T('no_coins_x',{e:EC_C.ENTRY,c:EC.fmt()})}
 $('#wTg').onclick=()=>openTg('nocoins');$('#wAd').onclick=()=>adCoins();$('#wDaily').onclick=()=>openDaily('nocoins');$('#wShop').onclick=()=>openShop('packs','nocoins');
@@ -741,6 +746,7 @@ function endCoins(esc_){const box=$('#endCoins');if(!match){box.hidden=true;retu
  $('#ecAdT').textContent=gain?T('end_x2',{n:gain}):T('end_refund',{n:back});
  ad.onclick=()=>{if(match.endAd)return;ad.disabled=true;ADS.rewarded().then(ok=>{if(ok){match.endAd=true;EC.add(back);toast(gain?T('got_coins',{n:back}):T('refunded',{n:back}));$('#ecAdT').textContent=T('got_coins',{n:back});bal()}else{ad.disabled=false;toast(T('ad_fail'))}})}}
 setTimeout(renderEcon,0);
+SRV.onSync=r=>{if(r.got>0){toast(T('got_coins',{n:r.got}),3500);S.pickup&&S.pickup()}if(r.newAdmin)toast(T('admin_on'),4000);renderEcon();if(curScreen==='tg')renderTg()};
 show('boot');loop();
 window.__G={R,GQ,cam,scene,keys,updatePlayer,tick:(n,dt)=>{for(let i=0;i<n;i++){ST.t+=dt;hostMonster(dt);if(ST.ended)break}},ST,P,MS,MSS,VIEWS,NOISE,me,act,hostAct,W,NAV,astar,CONT,HIDE,IT,remotes,startIntro,endIntro,monster,openPause,openSettings,sendChat,chatLog,openShop,openDaily,openTg,EC,_catch:id=>{const m=MSS[0];m.mode='hunt';m.pos.set(0,0,80);catchPlayer(m,id)},get match(){return match},get curScreen(){return curScreen},introSeek:t=>{if(intro)intro.t=t},get hostT(){return hostT},itemWorldPos,interactables};
 })();
