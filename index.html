@@ -323,7 +323,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
         <div class="row2"><button id="lobbyLeave" data-i="leave">Chiqish</button><button id="lobbyStart" class="primary" disabled data-i="start">Boshlash</button></div></div>
     </div>
     <div class="panel lchat"><div class="eb" data-i="chat">Chat</div><div class="chatLog" id="lobbyChat"></div>
-      <form class="chatForm" data-chat><input maxlength="120" autocomplete="off" data-ip="chat_ph"><button aria-label="Yuborish" data-ia="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form></div>
+      <form class="chatForm" data-chat><input maxlength="120" autocomplete="off" enterkeyhint="send" data-ip="chat_ph"><button aria-label="Yuborish" data-ia="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form></div>
   </div>
 </section>
 
@@ -362,7 +362,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
   <div id="joy" hidden><div id="joyKnob"></div></div>
   <div id="carBar" hidden><button id="exitCarBtn" data-i="get_out">Tushish</button><button id="driveBtn" class="primary" data-i="drive">Haydash</button></div>
   <div id="hudChat" class="hudBox"><div class="hdr"><span class="eb" data-i="chat">Chat</span><span class="pingTag"><span class="pdot" id="hudDot"></span><span data-i="ping"></span> <b id="hudPing">–</b></span></div><div class="chatLog" id="hudLog"></div>
-    <form class="chatForm" data-chat id="hudForm"><input maxlength="120" autocomplete="off" data-ip="chat_ph_pc"><button aria-label="Yuborish" data-ia="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form></div>
+    <form class="chatForm" data-chat id="hudForm"><input maxlength="120" autocomplete="off" enterkeyhint="send" data-ip="chat_ph_pc"><button aria-label="Yuborish" data-ia="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form></div>
   <button id="chatBtn" class="sq" aria-label="Chat" data-ia="chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></button>
   <div id="micWrap"><button id="micBtn" aria-pressed="true" data-ia="mic" aria-label="Mikrofon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><span id="micLbl"></span></div>
   <div id="talkInd" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4M7 7v10M11 4v16M15 8v8M19 11v2"/></svg><span id="talkTxt"></span></div>
