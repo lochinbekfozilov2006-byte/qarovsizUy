@@ -154,6 +154,7 @@ button.link:hover{color:var(--fg)}button.link.gold{color:var(--brass);align-self
 .row2{display:flex;gap:8px;align-items:center}.row2.al{gap:16px}
 .sq{width:46px;height:46px;padding:0!important;display:flex!important;align-items:center;justify-content:center!important;background:rgba(14,11,13,.72);font-size:22px}
 .sq svg{width:20px;height:20px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.flag{display:inline-block;width:18px;height:12px;vertical-align:-1px;margin-right:6px;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.25);flex:none}
 .srvPing{position:fixed;right:max(24px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:4px;background:rgba(14,11,13,.8);border:1px solid var(--line);font-size:14px;z-index:6}
 .pdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted)}.pdot.g{background:var(--ok)}.pdot.y{background:var(--brass)}.pdot.r{background:#e0735f}
 .joinBox{display:flex;flex-direction:column;gap:8px;padding:12px 18px 14px;border:1px solid var(--line);border-radius:4px}
@@ -274,7 +275,6 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 </section>
 
 <section id="online" class="screen side" hidden>
-  <div class="srvPing"><span class="pdot" id="srvDot"></span><span data-i="server"></span>: <b id="srvPing">…</b></div>
   <div class="panel">
     <button class="link" data-back="mode" data-i="back">‹ Orqaga</button>
     <div class="eb" data-i="online">Do'stlar bilan onlayn</div>
