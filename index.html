@@ -129,89 +129,268 @@ label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;letter-spacing
 @media (max-height:520px){.charCard img{aspect-ratio:auto;height:92px}.panel{padding:14px;gap:10px!important}#setup h2{font-size:20px}#menu h1{font-size:38px}#menu button{padding:11px 14px;font-size:16px}#menu p{display:none}}
 @media (max-width:640px){#objBox{max-width:52vw;padding:8px 10px}#obj{font-size:13px}#plBox{display:none}.panel{padding:18px}}
 @media (prefers-reduced-motion:reduce){#redFlash{animation:none}.bar i{transition:none}}
+/* ---- v2: menus with hero, settings, chat, voice ---- */
+.side{display:flex;align-items:center}
+.side .panel{width:min(440px,100%);display:flex;flex-direction:column;gap:12px;max-height:100%;overflow:auto}
+.side h1{font-size:clamp(42px,7vw,62px);line-height:.95;margin-bottom:6px}.side h1 span{color:var(--blood)}
+.side h2{font-size:clamp(30px,4.5vw,40px);line-height:1}
+.side button{text-align:left;font-size:18px;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.side button small{font-weight:400;font-size:13px;color:var(--muted);letter-spacing:0}
+.side button.primary small{color:rgba(255,255,255,.8)}
+.side button.big{font-size:21px;padding:18px 20px}
+button.card{flex-direction:column;align-items:stretch;gap:6px}
+button.card .t{display:flex;justify-content:space-between;align-items:center;font-size:20px}
+button.card .t em{font-style:normal;font-size:13px;font-weight:500;padding:3px 8px;border-radius:3px;background:rgba(0,0,0,.25);letter-spacing:0}
+button.card .d{font-weight:400;font-size:14px;line-height:1.35;letter-spacing:0;color:var(--muted);text-align:left}
+button.card.primary .d{color:rgba(255,255,255,.85)}
+button.link{border:none;background:none;padding:4px 0!important;color:var(--muted);font-size:15px!important;font-weight:500;align-self:flex-start;justify-content:flex-start!important}
+button.link:hover{color:var(--fg)}button.link.gold{color:var(--brass);align-self:auto}
+.foot{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:4px}
+#heroShow{position:fixed;z-index:4;right:4vw;bottom:0;width:min(34vw,420px);height:92vh;pointer-events:none;display:flex;align-items:flex-end;justify-content:center}
+#heroImg{position:relative;max-height:88vh;max-width:100%;filter:brightness(.6) contrast(1.15) saturate(.8) drop-shadow(-8px 0 18px rgba(184,64,44,.45))}
+.heroGlow{position:absolute;bottom:0;width:80%;height:16vh;border-radius:50%;background:rgba(184,64,44,.28);filter:blur(30px)}
+#heroPick{position:fixed;right:max(24px,env(safe-area-inset-right));top:max(20px,env(safe-area-inset-top));display:flex;flex-direction:column;align-items:flex-end;gap:4px;pointer-events:auto}
+#heroName{font-family:var(--f-display);font-weight:400;font-size:32px}
+.row2{display:flex;gap:8px;align-items:center}.row2.al{gap:16px}
+.sq{width:46px;height:46px;padding:0!important;display:flex!important;align-items:center;justify-content:center!important;background:rgba(14,11,13,.72);font-size:22px}
+.sq svg{width:20px;height:20px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.srvPing{position:fixed;right:max(24px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:4px;background:rgba(14,11,13,.8);border:1px solid var(--line);font-size:14px;z-index:6}
+.pdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted)}.pdot.g{background:var(--ok)}.pdot.y{background:var(--brass)}.pdot.r{background:#e0735f}
+.joinBox{display:flex;flex-direction:column;gap:8px;padding:12px 18px 14px;border:1px solid var(--line);border-radius:4px}
+.joinBox .jt{font-weight:600;font-size:18px;letter-spacing:.04em}
+.row3{display:flex;gap:10px}.row3 input{flex:1;font:600 24px var(--f-ui);letter-spacing:.5em;text-align:center;padding:9px}.row3 button{padding:0 22px;justify-content:center}
+.hdr{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#rooms,#settings,#pause{display:flex;align-items:center;justify-content:center}
+.panel.wide{width:min(780px,100%);display:flex;flex-direction:column;gap:12px;max-height:100%;overflow:auto}
+.panel.narrow{width:min(380px,100%);display:flex;flex-direction:column;gap:12px}
+.panel.narrow button{text-align:left;font-size:18px}
+button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
+.rhead,.rrow{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr) 110px;gap:0 12px;align-items:center}
+.rhead{padding:0 14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#roomList{display:flex;flex-direction:column;gap:6px;min-height:60px}
+.rrow{padding:9px 14px;border-radius:4px;background:rgba(236,227,212,.05);border:1px solid rgba(236,227,212,.1);font-size:17px}
+.rrow b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rrow .st{color:var(--muted)}
+.rrow button{padding:8px 0;justify-content:center;font-size:15px}
+.foot2{border-top:1px solid rgba(236,227,212,.12);padding-top:8px;font-size:15px;flex-wrap:wrap}
+.lobbyWrap{display:flex;gap:16px;width:min(1100px,100%);height:min(560px,100%)}
+#lobby{display:flex;align-items:center;justify-content:center}
+.lmain{flex:1.4;display:flex;flex-direction:column;gap:10px;overflow:auto}.lchat{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.badge{padding:6px 10px;border-radius:3px;border:1px solid var(--line);font-size:14px}.badge.ok{background:rgba(143,191,122,.16);border-color:transparent;color:#a9d595;font-weight:600}.badge.lock{background:rgba(217,180,106,.14);border-color:transparent;color:var(--brass);font-weight:600}
+#lobbyCode{font-size:clamp(40px,8vw,56px)}
+.codeRow p{flex-basis:100%;margin:0;font-size:14px}
+#lobbyList li{height:50px;padding:0 12px;box-sizing:border-box}
+#lobbyList li img{height:44px;width:28px;object-fit:contain;filter:brightness(.75)}
+#lobbyList li .nm{flex:1;font-weight:600}#lobbyList li .nm i{font-weight:400;margin-left:6px}
+#lobbyList li .pg{width:80px;display:flex;align-items:center;gap:6px;font-size:15px;color:var(--fg);font-style:normal;margin:0}
+#lobbyList li.empty{border-style:dashed;color:#8a7f6c;font-size:15px}
+#lobbyList li svg.mic{width:16px;height:16px;stroke:#6f665a;stroke-width:2.4;fill:none;stroke-linecap:round}#lobbyList li svg.mic.on{stroke:var(--ok)}
+.lfoot{margin-top:auto;flex-wrap:wrap}
+.chatLog{flex:1;overflow:auto;display:flex;flex-direction:column;gap:5px;font-size:15px;line-height:1.35;min-height:0;user-select:text;-webkit-user-select:text}
+.chatLog b{font-weight:600;color:var(--brass)}.chatLog .sys{color:#8a7f6c;font-style:italic}.chatLog .warn{color:#e0735f;font-style:italic}
+.chatForm{display:flex;gap:6px}.chatForm input{flex:1;font-size:16px;padding:9px 10px}.chatForm button{width:44px;padding:0;display:flex;align-items:center;justify-content:center}
+.chatForm svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linejoin:round}
+.setp{width:min(1100px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:14px}
+.setGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}
+.setGrid .col{display:flex;flex-direction:column;gap:14px}.setGrid .bl{padding-left:26px;border-left:1px solid rgba(236,227,212,.12)}
+.grp{display:flex;flex-direction:column;gap:8px}
+.seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.seg.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.seg button{padding:12px 0;font-size:16px}.seg button[aria-pressed="true"]{border-color:var(--blood);background:var(--blood-soft)}
+.sl{display:grid;grid-template-columns:150px minmax(0,1fr) 46px;align-items:center;gap:12px;font-size:16px}
+.sl input{accent-color:var(--blood);padding:0;width:100%}.sl output{text-align:right;color:var(--muted)}
+.sm{font-size:14px}
+.tgl{display:flex;justify-content:space-between;align-items:center;font-size:17px}
+.tgl button{width:54px;height:30px;border-radius:15px;border:none;background:#3a3236;position:relative;padding:0}
+.tgl button i{position:absolute;left:4px;top:4px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .15s}
+.tgl button[aria-checked="true"]{background:var(--blood)}.tgl button[aria-checked="true"] i{left:28px}
+#hudTR{position:absolute;right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));display:flex;gap:8px;align-items:flex-start;pointer-events:none}
+#hudTR #plBox{position:static}#pauseBtn{pointer-events:auto}
+#plist li svg{width:12px;height:12px;stroke:#6f665a;stroke-width:2.4;fill:none;margin-right:5px;vertical-align:-1px}#plist li svg.on{stroke:var(--ok)}
+#hudChat{left:max(12px,env(safe-area-inset-left));bottom:calc(env(safe-area-inset-bottom) + 14px);width:min(360px,40vw);display:flex;flex-direction:column;gap:6px;pointer-events:auto}
+#hudChat .chatLog{max-height:96px;font-size:14px}
+.pingTag{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+#hudChat.mini .chatForm{display:none}
+#chatBtn{position:absolute;left:max(12px,env(safe-area-inset-left));top:46%;pointer-events:auto;display:none!important}
+#micWrap{position:absolute;right:max(96px,calc(env(safe-area-inset-right) + 90px));bottom:calc(env(safe-area-inset-bottom) + 30px);display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:auto}
+#micBtn{width:64px;height:64px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;background:rgba(14,11,13,.78);border:2px solid #6f665a;color:#a3967f}
+#micBtn svg{width:28px;height:28px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+#micBtn[aria-pressed="true"]{border-color:var(--ok);color:var(--ok)}#micBtn.live{box-shadow:0 0 0 6px rgba(143,191,122,.22)}
+#micBtn.off{opacity:.55}#micLbl{font-size:12px;color:var(--muted)}
+#talkInd{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 110px);transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:20px;background:rgba(14,11,13,.7);font-size:14px}
+#talkInd svg{width:14px;height:14px;stroke:var(--ok);stroke-width:2.4;fill:none;stroke-linecap:round}
+#holyFlash{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,250,220,.95),rgba(255,230,160,.4) 60%,rgba(255,220,140,0));animation:holy 1.2s forwards;pointer-events:none}
+@keyframes holy{from{opacity:1}to{opacity:0}}
+.touch #hudChat{width:min(300px,38vw);bottom:auto;top:calc(max(12px,env(safe-area-inset-top)) + 150px)}
+.touch #hudChat .chatLog{max-height:70px}
+.touch #micWrap{right:auto;left:50%;transform:translateX(120px);bottom:calc(env(safe-area-inset-bottom) + 26px)}
+#obj li.opt{color:var(--muted);font-size:13px}#obj li.opt.ok{color:var(--brass);text-decoration:none}
+@media (max-width:900px){#heroShow{width:30vw}.lobbyWrap{flex-direction:column;height:100%}.lchat{min-height:200px}.setGrid{grid-template-columns:1fr}.setGrid .bl{padding-left:0;border-left:none}}
+@media (max-height:520px){.side .panel{gap:8px}.side button{padding:10px 14px;font-size:16px}button.card .d{display:none}#heroName{font-size:24px}.lobbyWrap{height:100%}#lobbyList li{height:40px}#lobbyCode{font-size:34px}.codeRow p{display:none}}
 </style>
 </head>
 <body>
 <canvas id="cv"></canvas>
 
 <section id="boot" class="screen">
-  <div class="eb">2–4 kishilik onlayn horror</div>
+  <div class="eb" data-i="boot_tag">2–5 kishilik onlayn horror</div>
   <h1>Qarovsiz <span>Uy</span></h1>
   <div class="bar" id="bootBar"><i></i></div>
-  <p id="bootMsg" class="muted">Uy yuklanmoqda…</p>
-  <button id="bootBtn" class="primary" disabled>Kuting…</button>
+  <p id="bootMsg" class="muted" data-i="boot_loading">Uy yuklanmoqda…</p>
+  <button id="bootBtn" class="primary" disabled data-i="boot_wait">Kuting…</button>
 </section>
 
 <section id="intro" class="screen" hidden>
   <div id="sub"></div>
   <div id="introBar"><i></i></div>
   <h1 id="introTitle" hidden><span style="color:var(--fg)">Qarovsiz&nbsp;</span><span>Uy</span></h1>
-  <button id="skipBtn">O'tkazib yuborish ›</button>
+  <button id="skipBtn" data-i="skip">O'tkazib yuborish ›</button>
 </section>
 
-<section id="menu" class="screen" hidden>
+<div id="heroShow" hidden>
+  <div class="heroGlow"></div>
+  <img id="heroImg" alt="">
+  <div id="heroPick"><span class="eb" data-i="hero">Qahramoningiz</span><b id="heroName">Marlon</b>
+    <div class="row2"><button id="heroPrev" class="sq" data-ia="prev_hero" aria-label="Oldingi">‹</button><button id="heroNext" class="sq" data-ia="next_hero" aria-label="Keyingi">›</button></div></div>
+</div>
+
+<section id="menu" class="screen side" hidden>
   <div class="panel">
-    <div class="eb">Bosh menyu</div>
+    <div class="eb" data-i="main_menu">Bosh menyu</div>
     <h1>Qarovsiz <span>Uy</span></h1>
-    <button id="mCreate" class="primary">Baza ochish <small>do'stlarni chaqirish</small></button>
-    <button id="mJoin">Bazaga qo'shilish <small>4 xonali kod</small></button>
-    <button id="mSolo">Yolg'iz o'ynash <small>bir o'zingiz</small></button>
-    <button id="mGfx">Grafika: <b id="gfxName">O'rta</b> <small>qotsa — “Past”ni tanlang</small></button>
-    <p>Maqsad: kalit va akkumulyatorni topib, garajdagi eski mashinani tuzating va qoching. Mahluq sizni ko'rsa, shkafga, stol tagiga yoki parda orqasiga yashiring.</p>
+    <button id="mPlay" class="primary big"><span data-i="play">O'yinni boshlash</span><small data-i="play_sub"></small></button>
+    <button id="mSettings"><span data-i="settings">Sozlamalar</span><small data-i="settings_sub"></small></button>
+    <div class="foot"><span data-i="menu_foot"></span><span id="langFoot"></span></div>
+  </div>
+</section>
+
+<section id="mode" class="screen side" hidden>
+  <div class="panel">
+    <button class="link" data-back="menu" data-i="back">‹ Orqaga</button>
+    <div class="eb" data-i="play">O'yinni boshlash</div>
+    <h2 data-i="how_play">Qanday o'ynaysiz?</h2>
+    <button id="mOnline" class="primary card"><span class="t"><span data-i="online"></span><em data-i="players25"></em></span><span class="d" data-i="online_sub"></span></button>
+    <button id="mSolo" class="card"><span class="t"><span data-i="solo"></span></span><span class="d" data-i="solo_sub"></span></button>
+  </div>
+</section>
+
+<section id="online" class="screen side" hidden>
+  <div class="srvPing"><span class="pdot" id="srvDot"></span><span data-i="server"></span>: <b id="srvPing">…</b></div>
+  <div class="panel">
+    <button class="link" data-back="mode" data-i="back">‹ Orqaga</button>
+    <div class="eb" data-i="online">Do'stlar bilan onlayn</div>
+    <button id="mOpen" class="primary card"><span class="t"><span data-i="open_room"></span></span><span class="d" data-i="open_room_sub"></span></button>
+    <button id="mCreate"><span data-i="create_room"></span><small data-i="create_room_sub"></small></button>
+    <div class="joinBox"><span class="jt" data-i="join_room"></span>
+      <div class="row3"><input id="joinCode" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000" data-ia="code4"><button id="mJoin" data-i="join">Kirish</button></div>
+      <div class="err" id="joinErr" role="alert"></div></div>
   </div>
 </section>
 
 <section id="setup" class="screen" hidden>
   <div class="panel">
-    <div class="eb">Personaj</div>
-    <h2 id="setupTitle">Baza ochish</h2>
-    <label class="f" for="nameIn">Ismingiz<input id="nameIn" maxlength="14" autocomplete="off" placeholder="Masalan: Lochinbek"></label>
-    <label class="f" id="codeRow" for="codeIn" hidden>Baza kodi<input id="codeIn" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000"></label>
+    <div class="eb" data-i="character">Personaj</div>
+    <h2 id="setupTitle"></h2>
+    <label class="f" for="nameIn"><span data-i="your_name"></span><input id="nameIn" maxlength="14" autocomplete="off" data-ip="name_ph"></label>
+    <label class="f" id="codeRow" for="codeIn" hidden><span data-i="room_code"></span><input id="codeIn" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000"></label>
     <div id="chars">
       <button class="charCard" data-c="marlon" aria-pressed="true"><img id="thumb_marlon" alt="Marlon"><span>Marlon</span></button>
-      <button class="charCard" data-c="boy" aria-pressed="false"><img id="thumb_boy" alt="Bola"><span>Bola</span></button>
+      <button class="charCard" data-c="boy" aria-pressed="false"><img id="thumb_boy" alt="Bola"><span class="cn" data-c="boy">Bola</span></button>
       <button class="charCard" data-c="kate" aria-pressed="false"><img id="thumb_kate" alt="Kate"><span>Kate</span></button>
     </div>
     <div class="err" id="setupErr" role="alert"></div>
-    <div class="row"><button id="setupBack">Orqaga</button><button id="setupGo" class="primary">Davom etish</button></div>
+    <div class="row"><button id="setupBack" data-i="back_btn">Orqaga</button><button id="setupGo" class="primary" data-i="cont">Davom etish</button></div>
+  </div>
+</section>
+
+<section id="rooms" class="screen" hidden>
+  <div class="panel wide">
+    <div class="hdr"><button class="link" id="roomsBack" data-i="back">‹ Orqaga</button><span class="muted" id="roomsStatus" data-i="searching"></span></div>
+    <div class="hdr"><div><div class="eb" data-i="rooms_eb"></div><h2 data-i="rooms_title"></h2></div><button id="roomsQuick" class="primary" data-i="quick_join" disabled></button></div>
+    <div class="rhead"><span data-i="col_host"></span><span data-i="col_players"></span><span data-i="col_ping"></span><span data-i="col_state"></span><span></span></div>
+    <div id="roomList"></div>
+    <div class="hdr foot2"><span class="muted" data-i="rooms_hint"></span><button class="link gold" id="roomsOwn" data-i="own_open"></button></div>
   </div>
 </section>
 
 <section id="lobby" class="screen" hidden>
-  <div class="panel">
-    <div class="eb">Baza kodi</div>
-    <div class="codeRow"><div id="lobbyCode">----</div><button id="copyCode">Nusxalash</button></div>
-    <p class="muted" style="margin:0">Shu kodni do'stlaringizga yuboring. Ular "Bazaga qo'shilish"ni bosib, kodni yozishadi.</p>
-    <div class="eb" id="lobbyCount">1 / 4 o'yinchi</div>
-    <ul id="lobbyList"></ul>
-    <p class="err" id="lobbyNeed">Boshlash uchun kamida 2 o'yinchi kerak.</p>
-    <p class="muted" id="lobbyWait" hidden>Baza egasi o'yinni boshlashini kuting…</p>
-    <div class="row"><button id="lobbyLeave">Chiqish</button><button id="lobbyStart" class="primary" disabled>Boshlash</button></div>
+  <div class="lobbyWrap">
+    <div class="panel lmain">
+      <div class="hdr"><div><div class="eb" id="lobbyEb" data-i="your_room"></div><h2 id="lobbyTitle">Baza</h2></div>
+        <div class="badges"><span id="lobbyBadge" class="badge ok"></span><span class="badge" id="lobbyPingB"><span data-i="ping"></span>: <b id="lobbyPing">–</b></span></div></div>
+      <div class="codeRow" id="codeWrap"><div id="lobbyCode">----</div><button id="copyCode" data-i="copy">Nusxalash</button><p class="muted" id="lobbyHint"></p></div>
+      <ul id="lobbyList"></ul>
+      <div class="hdr lfoot"><span class="muted"><span id="lobbyCount"></span> · <span id="lobbyNeed" data-i="need2"></span><span id="lobbyWait" hidden data-i="wait_host"></span></span>
+        <div class="row2"><button id="lobbyLeave" data-i="leave">Chiqish</button><button id="lobbyStart" class="primary" disabled data-i="start">Boshlash</button></div></div>
+    </div>
+    <div class="panel lchat"><div class="eb" data-i="chat">Chat</div><div class="chatLog" id="lobbyChat"></div>
+      <form class="chatForm" data-chat><input maxlength="120" autocomplete="off" data-ip="chat_ph"><button aria-label="Yuborish" data-ia="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form></div>
+  </div>
+</section>
+
+<section id="settings" class="screen" hidden>
+  <div class="panel setp">
+    <div class="hdr"><div class="row2 al"><button class="link" id="setBack" data-i="back">‹ Orqaga</button><h2 data-i="settings">Sozlamalar</h2></div><button id="setSave" class="primary" data-i="save">Saqlash</button></div>
+    <div class="setGrid">
+      <div class="col">
+        <div class="grp"><div class="eb" data-i="lang"></div><div class="seg" id="segLang"><button data-v="uz">O'zbekcha</button><button data-v="ru">Русский</button><button data-v="en">English</button></div></div>
+        <div class="grp"><div class="eb" data-i="gfx"></div><div class="seg" id="segGfx"><button data-v="low" data-i="gfx_low"></button><button data-v="mid" data-i="gfx_mid"></button><button data-v="high" data-i="gfx_high"></button></div><span class="muted sm" id="gfxNote" data-i="gfx_hint"></span></div>
+        <div class="grp"><div class="eb" data-i="sound"></div>
+          <label class="sl"><span data-i="vol_game"></span><input type="range" id="volGame" min="0" max="100"><output></output></label>
+          <label class="sl"><span data-i="vol_mon"></span><input type="range" id="volMon" min="0" max="100"><output></output></label>
+          <label class="sl"><span data-i="vol_mic"></span><input type="range" id="volMic" min="0" max="200"><output></output></label></div>
+      </div>
+      <div class="col bl">
+        <div class="eb" data-i="voice"></div>
+        <div class="tgl"><span data-i="mic"></span><button role="switch" id="micSwitch" aria-checked="true" data-ia="mic"><i></i></button></div>
+        <div class="grp"><span data-i="talk_mode"></span><div class="seg two" id="segTalk"><button data-v="open" data-i="talk_open"></button><button data-v="ptt" data-i="talk_ptt"></button></div><span class="muted sm" id="pttNote" data-i="ptt_hint_pc"></span></div>
+        <div class="eb" data-i="players_vol"></div>
+        <div id="pvList"></div>
+        <span class="muted sm" data-i="prox_hint"></span>
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="hud" class="screen" hidden>
   <div id="touchLayer"></div>
   <div id="cross"></div>
-  <div class="hudBox" id="objBox"><div class="eb">Vazifa</div><ul id="obj"></ul><div id="hold"></div></div>
-  <div class="hudBox" id="plBox"><div class="eb">O'yinchilar</div><ul id="plist"></ul></div>
+  <div class="hudBox" id="objBox"><div class="eb" data-i="task">Vazifa</div><ul id="obj"></ul><div id="hold"></div></div>
+  <div id="hudTR"><div class="hudBox" id="plBox"><div class="eb"><span data-i="players"></span> <span id="plCount"></span></div><ul id="plist"></ul></div><button id="pauseBtn" class="sq" data-ia="pause" aria-label="Pauza"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg></button></div>
   <div id="stam"><i></i></div>
   <button id="handBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12.5V5.6a1.4 1.4 0 0 1 2.8 0V11M10.8 10.5V4.2a1.4 1.4 0 0 1 2.8 0v6.3M13.6 10.5V5.2a1.4 1.4 0 0 1 2.8 0V11M16.4 11V8.4a1.4 1.4 0 0 1 2.8 0v5.4c0 4.1-2.9 7.2-6.9 7.2h-.9c-2.6 0-4.3-1.2-5.9-3.4l-2.5-3.7a1.5 1.5 0 0 1 2.4-1.8L8 14.4"/></svg><span id="handLbl">Ochish</span><kbd>E</kbd></button>
-  <div id="pad" hidden><button id="runBtn" aria-pressed="false">YUGUR</button><button id="flBtn" aria-pressed="true">FONAR</button></div>
+  <div id="pad" hidden><button id="runBtn" aria-pressed="false" data-i="run">YUGUR</button><button id="flBtn" aria-pressed="true" data-i="light">FONAR</button></div>
   <div id="joy" hidden><div id="joyKnob"></div></div>
-  <div id="carBar" hidden><button id="exitCarBtn">Tushish</button><button id="driveBtn" class="primary">Haydash</button></div>
-  <div id="hideVeil" hidden><span>Yashiringansiz</span></div>
+  <div id="carBar" hidden><button id="exitCarBtn" data-i="get_out">Tushish</button><button id="driveBtn" class="primary" data-i="drive">Haydash</button></div>
+  <div id="hudChat" class="hudBox"><div class="hdr"><span class="eb" data-i="chat">Chat</span><span class="pingTag"><span class="pdot" id="hudDot"></span><span data-i="ping"></span> <b id="hudPing">–</b></span></div><div class="chatLog" id="hudLog"></div>
+    <form class="chatForm" data-chat id="hudForm"><input maxlength="120" autocomplete="off" data-ip="chat_ph_pc"><button aria-label="Yuborish" data-ia="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l16-8-6 16-2-7z"/></svg></button></form></div>
+  <button id="chatBtn" class="sq" aria-label="Chat" data-ia="chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></button>
+  <div id="micWrap"><button id="micBtn" aria-pressed="true" data-ia="mic" aria-label="Mikrofon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><span id="micLbl"></span></div>
+  <div id="talkInd" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4M7 7v10M11 4v16M15 8v8M19 11v2"/></svg><span id="talkTxt"></span></div>
+  <div id="hideVeil" hidden><span data-i="you_hidden">Yashiringansiz</span></div>
+  <div id="holyFlash" hidden></div>
   <div id="redFlash" hidden></div>
-  <div id="deadMsg" hidden><h2>Sizni ushlab oldi</h2><span class="muted">Kuzatyapsiz: <b id="deadWho"></b></span><button id="deadNext">Boshqa o'yinchi</button></div>
+  <div id="deadMsg" hidden><h2 data-i="caught_you">Sizni ushlab oldi</h2><span class="muted"><span data-i="watching"></span> <b id="deadWho"></b></span><button id="deadNext" data-i="next_player">Boshqa o'yinchi</button></div>
+</section>
+
+<section id="pause" class="screen" hidden>
+  <div class="panel narrow">
+    <div class="eb" data-i="pause">Pauza</div>
+    <h2 id="pauseT" data-i="pause_t"></h2>
+    <p class="muted" id="pauseX"></p>
+    <button id="pResume" class="primary" data-i="resume"></button>
+    <button id="pSettings" data-i="settings"></button>
+    <button id="pQuit" class="danger" data-i="quit"></button>
+  </div>
 </section>
 
 <section id="end" class="screen" hidden>
   <div class="panel">
-    <div class="eb">O'yin tugadi</div>
+    <div class="eb" data-i="end">O'yin tugadi</div>
     <h2 id="endTitle"></h2>
     <p id="endText" class="muted" style="margin:0;line-height:1.5"></p>
+    <p id="endTime" class="eb" style="margin:0"></p>
     <ul id="endList"></ul>
-    <button id="endBack" class="primary">Bosh menyuga</button>
+    <button id="endBack" class="primary" data-i="to_menu">Bosh menyuga</button>
   </div>
 </section>
 <div id="toast" hidden></div>
@@ -224,8 +403,10 @@ label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;letter-spacing
 <script src="world.js"></script>
 <script src="actors.js"></script>
 <script src="audio.js"></script>
+<script src="i18n.js"></script>
 <script src="config.js"></script>
 <script src="net.js"></script>
+<script src="voice.js"></script>
 <script src="game.js"></script>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:'&&!window.Capacitor){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script>
 </body>
