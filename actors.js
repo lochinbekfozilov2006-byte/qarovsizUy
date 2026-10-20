@@ -14,15 +14,16 @@ A.loadFurniture=function(){return fetch('furniture.json').then(r=>r.json()).then
 A.parseFurn=function(b64){return new Promise(res=>loader.parse(b64buf(b64),'',g=>{const geos=[];g.scene.updateMatrixWorld(true);g.scene.traverse(m=>{if(m.isMesh){const ge=m.geometry.clone().applyMatrix4(m.matrixWorld);const ng=ge.index?ge.toNonIndexed():ge;ng.computeVertexNormals();geos.push(ng)}});res(geos)},()=>res([])))};
 
 /* ---------- player characters ---------- */
-A.CHARS={marlon:{name:'Marlon',file:'marlon',h:1.78},boy:{name:'Bola',file:'boy',h:1.62},kate:{name:'Kate',file:'kate',h:1.7}};
+A.CHARS={marlon:{name:'Marlon',file:'marlon',h:1.78},kate:{name:'Kate',file:'kate',h:1.7},boy:{name:'Bola',file:'boy',h:1.62},guard:{name:'Qorovul',file:'marlon',h:1.8,tint:[.5,.44,.38]}};
 const src={};
-A.loadChars=function(){return Promise.all(Object.keys(A.CHARS).map(k=>A.loadGLB(A.CHARS[k].file).then(g=>{src[k]=g})))};
+A.loadChars=function(){const files={};Object.keys(A.CHARS).forEach(k=>{const f=A.CHARS[k].file;if(!files[f])files[f]=A.loadGLB(f)});/* a skin shares its base model */
+ return Promise.all(Object.keys(A.CHARS).map(k=>files[A.CHARS[k].file].then(g=>{src[k]=g})))};
 const BN=['Hips','Spine','Spine1','Spine2','Neck','Head','LeftArm','LeftForeArm','RightArm','RightForeArm','LeftUpLeg','LeftLeg','RightUpLeg','RightLeg','LeftShoulder','RightShoulder','LeftFoot','RightFoot'];
 function findBones(root){const out={};root.traverse(o=>{if(!o.isBone)return;for(const n of BN){if(!out[n]&&o.name.endsWith(n)&&!o.name.endsWith('Fore'+n)){out[n]=o}}});
  /* LeftArm vs LeftForeArm: endsWith('LeftArm') never matches 'LeftForeArm' */return out}
 const _q=new THREE.Quaternion(),_q2=new THREE.Quaternion(),_v=new THREE.Vector3(),_v2=new THREE.Vector3();
 A.makeCharacter=function(kind,opt){opt=opt||{};const def=opt.def||A.CHARS[kind]||A.CHARS.marlon;const g=opt.gltf||src[kind]||src.marlon;const style=opt.style||'human';
- const model=THREE.SkeletonUtils.clone(g.scene);const outer=new THREE.Group();const inner=new THREE.Group();outer.add(inner);inner.add(model);
+ const model=THREE.SkeletonUtils.clone(g.scene);if(def.tint){const tc=new THREE.Color(def.tint[0],def.tint[1],def.tint[2]);const done=new Map();model.traverse(o=>{if(o.isMesh&&o.material){o.material=Array.isArray(o.material)?o.material.map(m=>{if(!done.has(m)){const c=m.clone();c.color&&c.color.multiply(tc);done.set(m,c)}return done.get(m)}):(()=>{const m=o.material;if(!done.has(m)){const c=m.clone();c.color&&c.color.multiply(tc);done.set(m,c)}return done.get(m)})()}})}const outer=new THREE.Group();const inner=new THREE.Group();outer.add(inner);inner.add(model);
  model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.frustumCulled=false;if(o.material){const ms=[].concat(o.material);ms.forEach(m=>{if(m.map)m.map.encoding=THREE.sRGBEncoding;m.roughness=.85;m.metalness=0;if(m.transparent||m.alphaTest){m.alphaTest=/hair/i.test(o.name+m.name)?.08:.4;m.transparent=false;m.depthWrite=true;m.side=THREE.DoubleSide}})}}});
  const bones=findBones(model);
  /* stop any baked animation: reset to bind pose */
