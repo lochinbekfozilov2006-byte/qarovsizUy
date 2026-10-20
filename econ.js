@@ -62,21 +62,36 @@ function demo(sec){return new Promise(res=>{const o=document.getElementById('adD
  const lbl=o.querySelector('[data-ad-left]'),bar=o.querySelector('[data-ad-bar]'),x=o.querySelector('[data-ad-close]');let t=sec;o.hidden=false;x.disabled=true;bar.style.width='0%';
  const tick=()=>{lbl.textContent='0:'+String(Math.max(0,Math.ceil(t))).padStart(2,'0');bar.style.width=Math.min(100,(sec-t)/sec*100)+'%'};tick();
  const iv=setInterval(()=>{t-=.25;tick();if(t<=0){clearInterval(iv);x.disabled=false}},250);
- x.onclick=()=>{if(x.disabled)return;o.hidden=true;res(true)}})}
+ x.onclick=()=>{if(x.disabled)return;o.hidden=true;try{window.SRV&&SRV.ev('ad')}catch(e){}res(true)}})}
 const ADS=window.ADS={ids:AD_IDS,
  get native(){return !!plugin()},
  /* resolves true when the player earned the reward */
  rewarded(){if(s.admin)return Promise.resolve(true);const AM=plugin();if(!AM)return demo(5);
   return init().then(()=>new Promise(res=>{let got=false,done=false;const hs=[];const fin=v=>{if(done)return;done=true;hs.forEach(h=>{try{h&&h.remove&&h.remove()}catch(e){}});res(v)};
    const on=(ev,f)=>{try{const h=AM.addListener(ev,f);if(h&&h.then)h.then(x=>hs.push(x));else hs.push(h)}catch(e){}};
-   on('onRewardedVideoAdReward',()=>{got=true});on('onRewardedVideoAdDismissed',()=>setTimeout(()=>fin(got),300));
+   on('onRewardedVideoAdReward',()=>{got=true;SRV.ev('ad')});on('onRewardedVideoAdDismissed',()=>setTimeout(()=>fin(got),300));
    on('onRewardedVideoAdFailedToLoad',()=>fin(false));on('onRewardedVideoAdFailedToShow',()=>fin(false));
    AM.prepareRewardVideoAd({adId:AD_IDS.reward,isTesting:true}).then(()=>AM.showRewardVideoAd()).then(r=>{if(r&&(r.amount!=null||r.type))got=true;setTimeout(()=>fin(got),1500)}).catch(()=>fin(false))}))},
  /* between games only; skipped for admins, "Reklamasiz" buyers and on the website */
  interstitial(){if(E.noAds())return Promise.resolve();const AM=plugin();if(!AM)return Promise.resolve();
-  return init().then(()=>AM.prepareInterstitial({adId:AD_IDS.inter,isTesting:true})).then(()=>AM.showInterstitial()).catch(()=>{})},
+  return init().then(()=>AM.prepareInterstitial({adId:AD_IDS.inter,isTesting:true})).then(()=>AM.showInterstitial()).then(()=>SRV.ev('ad')).catch(()=>{})},
  init};
 /* In-app purchases go through Google Play Billing once the game is on Play Market */
+
+/* ---------- link with the Telegram bot / server (admin flag, gifts, stats) ---------- */
+const API=(()=>{try{if(location.protocol==='https:'&&/vercel\.app$/.test(location.hostname))return ''}catch(e){}return 'https://qarovsiz-uybot.vercel.app'})();
+let DEV='';try{DEV=localStorage.getItem('qu_dev')||''}catch(e){}
+if(!/^[a-f0-9]{32}$/.test(DEV)){const a=new Uint8Array(16);(window.crypto||{}).getRandomValues?crypto.getRandomValues(a):a.forEach((_,i)=>a[i]=Math.random()*256|0);DEV=[...a].map(x=>x.toString(16).padStart(2,'0')).join('');try{localStorage.setItem('qu_dev',DEV)}catch(e){}}
+const SRV=window.SRV={dev:DEV,api:API,info:null,ok:false,onSync:null,
+ sync(){return fetch(API+'/api/me?dev='+DEV,{cache:'no-store'}).then(r=>r.json()).then(j=>{if(!j||!j.ok)throw 0;SRV.ok=true;SRV.info=j;let got=0,tg=false;const wasAdmin=s.admin;s.admin=!!j.admin;
+   (j.grants||[]).forEach(g=>{if(g&&g.coins>0){if(!s.admin)s.coins+=Math.floor(g.coins);got+=g.coins}if(g&&g.kind==='tg')tg=true});
+   if(tg||j.tgDone)s.tg=true;save();if(SRV.onSync)SRV.onSync({got,tg,admin:s.admin,newAdmin:s.admin&&!wasAdmin});return j})
+  .catch(()=>{SRV.ok=false;return null})},
+ ev(t,on){try{fetch(API+'/api/ev',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dev:DEV,t,on:on?1:0}),keepalive:true}).catch(()=>{})}catch(e){}},
+ redeem(code){return fetch(API+'/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dev:DEV,code})}).then(r=>r.json()).then(j=>{if(j&&j.ok&&j.coins>0){if(!s.admin)s.coins+=Math.floor(j.coins);save()}return j||{ok:false}}).catch(()=>({ok:false,error:'net'}))},
+ botLink(){const b=SRV.info&&SRV.info.bot;return b?'https://t.me/'+b+'?start=l_'+DEV:null}};
+setTimeout(()=>{SRV.sync();SRV.ev('open')},300);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')SRV.sync()});
 window.IAP={ready:false,buy(id){return Promise.resolve({ok:false,reason:'soon'})}};
 if(plugin())setTimeout(init,1500);
 })();
