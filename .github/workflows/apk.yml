@@ -31,7 +31,7 @@ jobs:
           mkdir -p /tmp/app && cd /tmp/app
           mv /tmp/www ./www
           npm init -y > /dev/null
-          npm i @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npm i @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor-community/admob@6
           npx cap init "Qarovsiz Uy" uz.qarovsiz.uy --web-dir www
           npx cap add android
           npx cap sync android
@@ -41,6 +41,10 @@ jobs:
           for d in $RES/mipmap-*; do cp www/icon-192.png $d/ic_launcher.png; cp www/icon-192.png $d/ic_launcher_round.png; done
           # ekran gorizontal, to'liq ekran
           sed -i 's/android:launchMode="singleTask"/android:launchMode="singleTask" android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
+          # AdMob (Google'ning sinov ilova ID'si — Play Market'dan oldin o'zingiznikiga almashtiriladi)
+          sed -i 's#</application>#<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-3940256099942544~3347511713"/></application>#' android/app/src/main/AndroidManifest.xml
+          grep -c APPLICATION_ID android/app/src/main/AndroidManifest.xml
+          npx cap sync android
 
       - name: APK yasash
         run: |
