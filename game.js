@@ -161,7 +161,7 @@ let flow='solo',setupFrom='mode';
 document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>show(b.dataset.back));
 $('#mPlay').onclick=()=>{S.init();S.resume();applyVolumes();show('mode')};
 $('#mSettings').onclick=()=>openSettings('menu');
-$('#mOnline').onclick=()=>{show('online');$('#joinErr').textContent='';$('#srvPing').textContent='…';$('#srvDot').className='pdot';N.serverPing(ms=>{$('#srvPing').textContent=ms==null?'—':ms+' '+T('ms');$('#srvDot').className='pdot '+pingCls(ms)})};
+$('#mOnline').onclick=()=>{show('online');$('#joinErr').textContent=''};
 $('#mSolo').onclick=()=>{flow='solo';setupFrom='mode';openSetup()};
 $('#mCreate').onclick=()=>{flow='host';setupFrom='online';openSetup()};
 $('#mOpen').onclick=()=>{flow='open';setupFrom='online';openSetup()};
@@ -177,7 +177,7 @@ $('#setupBack').onclick=()=>show(setupFrom);
 $('#codeIn').addEventListener('input',()=>{$('#codeIn').value=$('#codeIn').value.replace(/\D/g,'').slice(0,4);$('#setupErr').textContent=''});
 $('#nameIn').addEventListener('input',()=>$('#setupErr').textContent='');
 $('#nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('#setupGo').click()});
-function becomeHost(name){me.id='h';ST.players={h:{name,char:me.char,alive:true,hide:-1,car:false,ping:0}};ST.phase='lobby';chatLog.length=0;showLobby();VC.init()}
+function becomeHost(name){me.id='h';ST.players={h:{name,lg:I18N.lang,char:me.char,alive:true,hide:-1,car:false,ping:0}};ST.phase='lobby';chatLog.length=0;showLobby();VC.init()}
 $('#setupGo').onclick=()=>{const name=$('#nameIn').value.trim().slice(0,14);if(!name){$('#setupErr').textContent=T('err_name');return}
  if(flow==='join'&&!/^\d{4}$/.test($('#codeIn').value)){$('#setupErr').textContent=T('err_code');return}
  me.name=name;try{localStorage.setItem('qu_name',name)}catch(e){}S.init();S.resume();applyVolumes();
@@ -187,7 +187,7 @@ $('#setupGo').onclick=()=>{const name=$('#nameIn').value.trim().slice(0,14);if(!
  else if(flow==='open'){startRooms()}
  else joinRoom($('#codeIn').value,err=>{$('#setupErr').textContent=err==='notfound'?T('not_found'):T('conn_fail')})};
 function joinRoom(code,onErr){$('#setupGo').disabled=true;$('#setupErr').textContent=T('connecting');
- N.join(code,err=>{$('#setupGo').disabled=false;if(err){N.close();onErr(err);return}me.id=N.myId;N.send({t:'hello',name:me.name,char:me.char});ST.phase='lobby';chatLog.length=0;showLobby()})}
+ N.join(code,err=>{$('#setupGo').disabled=false;if(err){N.close();onErr(err);return}me.id=N.myId;N.send({t:'hello',name:me.name,lg:I18N.lang,char:me.char});ST.phase='lobby';chatLog.length=0;showLobby()})}
 
 /* ---------- open rooms: find one with a free slot or open our own ---------- */
 let roomsRun=0,roomsFound=[];
@@ -197,10 +197,10 @@ function startRooms(){const run=++roomsRun;show('rooms');roomsFound=[];renderRoo
   else{$('#roomsStatus').textContent=T('rooms_none');setTimeout(()=>{if(run===roomsRun&&curScreen==='rooms')hostOpenRoom()},700)}},
   part=>{if(run!==roomsRun)return;roomsFound=part;renderRooms()})}
 function joinOpen(list,i){if(i>=list.length){hostOpenRoom();return}const r=list[i];roomsRun++;
- N.join('O'+(r.slot+1),err=>{if(err){N.close();joinOpen(list,i+1);return}me.id=N.myId;N.send({t:'hello',name:me.name,char:me.char});ST.phase='lobby';chatLog.length=0;showLobby()})}
+ N.join('O'+(r.slot+1),err=>{if(err){N.close();joinOpen(list,i+1);return}me.id=N.myId;N.send({t:'hello',name:me.name,lg:I18N.lang,char:me.char});ST.phase='lobby';chatLog.length=0;showLobby()})}
 function hostOpenRoom(){roomsRun++;$('#roomsStatus').textContent=T('opening');N.hostOpen((err)=>{if(err){$('#roomsStatus').textContent=T('open_fail');return}becomeHost(me.name)})}
 function renderRooms(){const ok=roomsFound.filter(r=>r.phase==='lobby'&&r.players<r.max);$('#roomsQuick').disabled=!ok.length;
- $('#roomList').innerHTML=roomsFound.length?roomsFound.slice().sort((a,b)=>a.ping-b.ping).map(r=>'<div class="rrow"><b>'+esc(r.name)+'</b><span>'+r.players+' / '+r.max+'</span><span><span class="pdot '+pingCls(r.ping)+'"></span> '+r.ping+' '+T('ms')+'</span><span class="st">'+(r.phase==='lobby'?T('waiting_state'):'…')+'</span><button data-slot="'+r.slot+'"'+(r.phase==='lobby'&&r.players<r.max?'':' disabled')+'>'+T('join_btn')+'</button></div>').join(''):'';
+ $('#roomList').innerHTML=roomsFound.length?roomsFound.slice().sort((a,b)=>a.ping-b.ping).map(r=>'<div class="rrow"><b>'+FLAG(r.lg)+esc(r.name)+'</b><span>'+r.players+' / '+r.max+'</span><span><span class="pdot '+pingCls(r.ping)+'"></span> '+r.ping+' '+T('ms')+'</span><span class="st">'+(r.phase==='lobby'?T('waiting_state'):'…')+'</span><button data-slot="'+r.slot+'"'+(r.phase==='lobby'&&r.players<r.max?'':' disabled')+'>'+T('join_btn')+'</button></div>').join(''):'';
  $('#roomList').querySelectorAll('button[data-slot]').forEach(b=>b.onclick=()=>{const r=roomsFound.find(x=>x.slot===+b.dataset.slot);if(r)joinOpen([r],0)})}
 $('#roomsQuick').onclick=()=>{const ok=roomsFound.filter(r=>r.phase==='lobby'&&r.players<r.max).sort((a,b)=>a.ping-b.ping);if(ok.length)joinOpen(ok,0)};
 $('#roomsOwn').onclick=()=>hostOpenRoom();
@@ -215,16 +215,21 @@ function renderLobby(){if(curScreen!=='lobby')return;const ids=Object.keys(ST.pl
  const myPing=host?0:N.ping;$('#lobbyPing').textContent=host?T('host_tag'):(myPing+' '+T('ms'));
  const rows=[];for(let k=0;k<MAXP;k++){const id=ids[k];if(!id){rows.push('<li class="empty">'+T('empty_slot')+'</li>');continue}const p=ST.players[id];const pg=id==='h'?0:(p.ping||0);
   const talk=id===me.id?VC.speaking:VC.isTalking(id);
-  rows.push('<li><img src="'+($('#thumb_'+p.char).src||'')+'" alt=""><span class="nm">'+esc(p.name)+'<i class="muted">'+(id==='h'?'('+T('host_tag')+(id===me.id?', '+T('you'):'')+')':id===me.id?'('+T('you')+')':'')+'</i></span>'+
+  rows.push('<li><img src="'+($('#thumb_'+p.char).src||'')+'" alt=""><span class="nm">'+FLAG(p.lg)+esc(p.name)+'<i class="muted">'+(id==='h'?'('+T('host_tag')+(id===me.id?', '+T('you'):'')+')':id===me.id?'('+T('you')+')':'')+'</i></span>'+
    '<svg class="mic'+(talk?' on':'')+'" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>'+
    '<span class="pg"><span class="pdot '+pingCls(pg)+'"></span>'+(id==='h'?'—':pg+' '+T('ms'))+'</span></li>')}
  $('#lobbyList').innerHTML=rows.join('');
  const n=ids.length;$('#lobbyCount').textContent=T('lobby_count',{n});$('#lobbyStart').hidden=!host;$('#lobbyStart').disabled=n<2;$('#lobbyNeed').hidden=n>=2||!host;$('#lobbyWait').hidden=host}
+const FLAGS={uz:'<svg class="flag" viewBox="0 0 18 12"><rect width="18" height="12" fill="#fff"/><rect width="18" height="4" fill="#0099b5"/><rect y="8" width="18" height="4" fill="#1eb53a"/><rect y="3.7" width="18" height=".5" fill="#ce1126"/><rect y="7.8" width="18" height=".5" fill="#ce1126"/><circle cx="3" cy="2" r="1.3" fill="#fff"/><circle cx="3.5" cy="2" r="1.1" fill="#0099b5"/></svg>',
+ru:'<svg class="flag" viewBox="0 0 18 12"><rect width="18" height="4" fill="#fff"/><rect y="4" width="18" height="4" fill="#0039a6"/><rect y="8" width="18" height="4" fill="#d52b1e"/></svg>',
+en:'<svg class="flag" viewBox="0 0 60 30" preserveAspectRatio="none"><rect width="60" height="30" fill="#012169"/><path d="M0 0L60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0L60 30M60 0L0 30" stroke="#c8102e" stroke-width="2.4"/><path d="M30 0V30M0 15H60" stroke="#fff" stroke-width="10"/><path d="M30 0V30M0 15H60" stroke="#c8102e" stroke-width="6"/></svg>'};
+function FLAG(lg){return FLAGS[lg]||''}
+function okLg(l){return FLAGS[l]?l:'uz'}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 $('#lobbyStart').onclick=()=>{if(Object.keys(ST.players).length<2)return;const s=hostInitState();N.broadcast({t:'start',s});startGame(s)};
 $('#lobbyLeave').onclick=()=>{VC.closeAll();N.close();show('online');ST.phase='menu'};
 $('#copyCode').onclick=()=>{const c=$('#lobbyCode').textContent;try{navigator.clipboard.writeText(c).then(()=>toast(T('copied'))).catch(()=>toast(c))}catch(e){toast(c)}};
-N.info=()=>({players:Object.keys(ST.players).length,max:MAXP,phase:ST.phase==='lobby'?'lobby':'play',name:(ST.players.h||{}).name||'?'});
+N.info=()=>({players:Object.keys(ST.players).length,max:MAXP,phase:ST.phase==='lobby'?'lobby':'play',name:(ST.players.h||{}).name||'?',lg:(ST.players.h||{}).lg});
 N.onCall=call=>VC.onIncoming(call);
 N.onLeave=id=>{if(ST.players[id]){const n=ST.players[id].name;if(ST.phase==='lobby'){delete ST.players[id];N.broadcast({t:'lobby',players:ST.players});renderLobby()}else{ST.players[id].alive=false;ST.players[id].gone=true;broadcastState();hostCheckEnd()}sysChat(T('left',{n}));N.broadcast({t:'sys',k:'left',n});toast(T('left',{n}));VC.sync(Object.keys(ST.players),me.id)}};
 N.onStatus=(s)=>{if(s==='closed'&&N.mode==='client'){toast(T('host_lost'),4000);setTimeout(()=>quitToMenu(),2500)}};
@@ -232,29 +237,30 @@ VC.onDenied=()=>toast(T('mic_denied'),5000);
 
 /* ---------- chat ---------- */
 const chatLog=[];let chatLast=0;
-function addChat(name,text,cls){chatLog.push({name,text,cls});if(chatLog.length>60)chatLog.shift();renderChat()}
+function addChat(name,text,cls,lg){chatLog.push({name,text,cls,lg});if(chatLog.length>60)chatLog.shift();renderChat()}
 function sysChat(text,cls){addChat(null,text,cls||'sys')}
-function renderChat(){const html=chatLog.slice(-40).map(c=>c.name?'<div><b>'+esc(c.name)+':</b> '+esc(c.text)+'</div>':'<div class="'+c.cls+'">'+esc(c.text)+'</div>').join('');
- ['#lobbyChat','#hudLog'].forEach(s=>{const e=$(s);e.innerHTML=s==='#hudLog'?chatLog.slice(-6).map(c=>c.name?'<div><b>'+esc(c.name)+':</b> '+esc(c.text)+'</div>':'<div class="'+c.cls+'">'+esc(c.text)+'</div>').join(''):html;e.scrollTop=e.scrollHeight})}
+function renderChat(){const html=chatLog.slice(-40).map(c=>c.name?'<div>'+FLAG(c.lg)+'<b>'+esc(c.name)+':</b> '+esc(c.text)+'</div>':'<div class="'+c.cls+'">'+esc(c.text)+'</div>').join('');
+ ['#lobbyChat','#hudLog'].forEach(s=>{const e=$(s);e.innerHTML=s==='#hudLog'?chatLog.slice(-6).map(c=>c.name?'<div>'+FLAG(c.lg)+'<b>'+esc(c.name)+':</b> '+esc(c.text)+'</div>':'<div class="'+c.cls+'">'+esc(c.text)+'</div>').join(''):html;e.scrollTop=e.scrollHeight})}
 function sendChat(text){text=String(text||'').trim().slice(0,120);if(!text)return;const now=performance.now();if(now-chatLast<700)return;chatLast=now;
- if(N.mode==='client')N.send({t:'chat',m:text});else if(N.mode==='host')hostChat('h',text);else addChat(me.name,text)}
-function hostChat(from,text){const p=ST.players[from];if(!p)return;text=String(text).slice(0,120);N.broadcast({t:'chat',n:p.name,m:text});addChat(p.name,text)}
+ if(N.mode==='client')N.send({t:'chat',m:text});else if(N.mode==='host')hostChat('h',text);else addChat(me.name,text,null,I18N.lang)}
+function hostChat(from,text){const p=ST.players[from];if(!p)return;text=String(text).slice(0,120);N.broadcast({t:'chat',n:p.name,lg:p.lg,m:text});addChat(p.name,text,null,p.lg)}
 document.querySelectorAll('form[data-chat]').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();const i=f.querySelector('input');sendChat(i.value);i.value='';if(f.id==='hudForm'){i.blur()}}));
 $('#hudForm input').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';e.target.blur()}});
 
 /* ---------- network message handling ---------- */
 N.onMsg=(from,m)=>{if(!m||!m.t)return;
  if(N.mode==='host'){
-  if(m.t==='hello'){if(ST.phase!=='lobby'||Object.keys(ST.players).length>=MAXP){N.to(from,{t:'full'});return}ST.players[from]={name:String(m.name).slice(0,14),char:A.CHARS[m.char]?m.char:'marlon',alive:true,hide:-1,car:false,ping:0};N.broadcast({t:'lobby',players:ST.players});renderLobby();const n=ST.players[from].name;sysChat(T('joined',{n}));N.broadcast({t:'sys',k:'joined',n});VC.sync(Object.keys(ST.players),me.id)}
+  if(m.t==='hello'){if(ST.phase!=='lobby'||Object.keys(ST.players).length>=MAXP){N.to(from,{t:'full'});return}ST.players[from]={name:String(m.name).slice(0,14),lg:okLg(m.lg),char:A.CHARS[m.char]?m.char:'marlon',alive:true,hide:-1,car:false,ping:0};N.broadcast({t:'lobby',players:ST.players});renderLobby();const n=ST.players[from].name;sysChat(T('joined',{n}));N.broadcast({t:'sys',k:'joined',n});VC.sync(Object.keys(ST.players),me.id)}
   else if(m.t==='pos'){const r=remoteFor(from);if(r){r.tpos.set(m.p[0],m.p[1],m.p[2]);r.try=m.ry;r.sp=m.sp;r.fl=m.fl;r.pitch=m.pi||0}const p=ST.players[from];if(p){p.spk=!!m.k;if(m.pg!=null)p.ping=m.pg}}
   else if(m.t==='pi'){const p=ST.players[from];if(p){p.ping=m.v|0;p.spk=!!m.k}}
+  else if(m.t==='lg'){const p=ST.players[from];if(p){p.lg=okLg(m.v);if(ST.phase==='lobby'){N.broadcast({t:'lobby',players:ST.players});renderLobby()}}}
   else if(m.t==='chat')hostChat(from,m.m)
   else if(m.t==='act')hostAct(from,m.a,m.i)}
  else{
   if(m.t==='lobby'){ST.players=m.players;renderLobby();VC.sync(Object.keys(ST.players),me.id)}
   else if(m.t==='full'){toast(T('full'),4000);N.close();show('online')}
   else if(m.t==='start')startGame(m.s)
-  else if(m.t==='chat')addChat(m.n,m.m)
+  else if(m.t==='chat')addChat(m.n,m.m,null,okLg(m.lg))
   else if(m.t==='sys')sysChat(T(m.k,{n:m.n}))
   else if(m.t==='snap'){for(const id in m.pl){if(id===me.id)continue;const r=remoteFor(id);if(!r)continue;const a=m.pl[id];r.tpos.set(a[0],a[1],a[2]);r.try=a[3];r.sp=a[4];r.fl=a[5];if(ST.players[id])ST.players[id].ping=a[6]}
    (m.m||[]).forEach((a,i)=>{const v=VIEWS[i];if(!v)return;v.tpos.set(a[0],a[1],a[2]);v.try=a[3];v.vis=!!a[5];if(a[4]!==v.anim||a[6]!==v.ts){v.anim=a[4];v.ts=a[6]||1;v.model.play(v.anim,.2,v.ts)}});ST.t=m.time}
@@ -468,7 +474,7 @@ function renderObjectives(){const it=ST.items,c=ST.car;const row=(ok,t,cls)=>'<l
  $('#hold').innerHTML=(it.key.holder===me.id?'<span class="chipI">'+T('chip_key')+'</span>':'')+(it.bat.holder===me.id?'<span class="chipI">'+T('chip_bat')+'</span>':'')+(cr.holder===me.id?'<span class="chipI">'+T('chip_cross')+'</span>':'')}
 const MIC_SVG='<svg viewBox="0 0 24 24" aria-hidden="true" class="CL"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
 function renderPlayers(){const ids=Object.keys(ST.players);$('#plCount').textContent=ids.length+'/'+MAXP;const online=N.mode!=='solo';
- $('#plist').innerHTML=ids.map(id=>{const p=ST.players[id];const talk=online&&(id===me.id?VC.speaking:VC.isTalking(id));return '<li class="'+(p.alive?'':'dead')+'">'+(online?MIC_SVG.replace('CL',talk?'on':''):'')+esc(p.name)+(id===me.id?' ('+T('you')+')':'')+'<i>'+(p.car?T('in_car'):!p.alive?T('caught_s'):p.hide>=0?T('hidden_s'):'')+'</i></li>'}).join('')}
+ $('#plist').innerHTML=ids.map(id=>{const p=ST.players[id];const talk=online&&(id===me.id?VC.speaking:VC.isTalking(id));return '<li class="'+(p.alive?'':'dead')+'">'+(online?MIC_SVG.replace('CL',talk?'on':''):'')+FLAG(p.lg)+esc(p.name)+(id===me.id?' ('+T('you')+')':'')+'<i>'+(p.car?T('in_car'):!p.alive?T('caught_s'):p.hide>=0?T('hidden_s'):'')+'</i></li>'}).join('')}
 function renderMic(){const b=$('#micBtn');const on=VC.on&&!VC.denied;b.setAttribute('aria-pressed',VC.ptt?String(VC.pttHeld):String(on));b.classList.toggle('off',!on);$('#micLbl').textContent=!on?T('mic_off'):VC.ptt?T('talk_ptt'):(VC.speaking?T('talking'):T('mic'))}
 /* mic button: toggles the mic, or push-to-talk while held */
 $('#micBtn').addEventListener('pointerdown',e=>{if(VC.ptt){e.preventDefault();VC.setPttHeld(true);renderMic()}});
@@ -505,7 +511,7 @@ $('#volMic').oninput=e=>{VC.setMicGain(e.target.value/100);e.target.nextElementS
 $('#micSwitch').onclick=()=>{VC.setOn(!VC.on);$('#micSwitch').setAttribute('aria-checked',String(VC.on));renderMic()};
 function leaveSettings(){if(gfxPending&&gfxPending!==GQ&&ST.phase!=='play'&&ST.phase!=='lobby'&&N.mode==='solo'){const u=new URL(location.href);u.searchParams.set('menu','1');u.searchParams.delete('gfx');location.href=u.toString();return}show(setFrom)}
 $('#setBack').onclick=leaveSettings;$('#setSave').onclick=leaveSettings;
-I18N.onChange=()=>{renderObjectives();renderPlayers();renderLobby();renderRooms();renderMic();if(curScreen==='settings')openSettings(setFrom);$('#heroName').textContent=charName(me.char);if(curScreen==='setup')$('#setupTitle').textContent=T({host:'t_create',join:'t_join',solo:'t_solo',open:'t_open'}[flow]);if(!$('#bootBtn').disabled)$('#bootBtn').textContent=T('boot_enter')};
+I18N.onChange=()=>{const mp=ST.players[me.id];if(mp&&N.mode!=='solo'&&mp.lg!==I18N.lang){mp.lg=I18N.lang;if(N.mode==='host'&&ST.phase==='lobby')N.broadcast({t:'lobby',players:ST.players});else if(N.mode==='client')N.send({t:'lg',v:I18N.lang})}renderObjectives();renderPlayers();renderLobby();renderRooms();renderMic();if(curScreen==='settings')openSettings(setFrom);$('#heroName').textContent=charName(me.char);if(curScreen==='setup')$('#setupTitle').textContent=T({host:'t_create',join:'t_join',solo:'t_solo',open:'t_open'}[flow]);if(!$('#bootBtn').disabled)$('#bootBtn').textContent=T('boot_enter')};
 
 /* ---------- performance: static batching + light pool ---------- */
 function optimizeScene(){
