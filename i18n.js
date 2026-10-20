@@ -1,0 +1,100 @@
+/* Qarovsiz Uy — tarjimalar (o'zbekcha / русский / english) */
+(function(){
+const D={
+uz:{
+ boot_tag:"2–5 kishilik onlayn horror",boot_loading:"Uy yuklanmoqda…",boot_wait:"Kuting…",boot_enter:"O'yinga kirish",boot_tip:"Quloqchin bilan o'ynash tavsiya etiladi.",boot_err:"Yuklashda xato: sahifani yangilang.",
+ skip:"O'tkazib yuborish ›",
+ intro1:"1997-yil, kuz. Shahar chetidagi bu uyda bir oila yashardi.",intro2:"Bir kechada ular izsiz g'oyib bo'lishdi. Yerto'ladan faqat tirnoq izlari topildi.",intro3:"O'shandan beri qo'shnilar har kecha shu uydan qichqiriq eshitishadi.",intro4:"Siz yo'lda adashib, shu hovliga kirib qoldingiz. Telefonlar ishlamayapti.",intro5:"Garajdagi eski mashina yagona najot. Unga kalit va akkumulyator kerak.",intro6:"Shoshiling. U sizni allaqachon ko'rib turibdi.",
+ main_menu:"Bosh menyu",play:"O'yinni boshlash",play_sub:"yolg'iz yoki do'stlar bilan",settings:"Sozlamalar",settings_sub:"til, grafika, ovoz",hero:"Qahramoningiz",prev_hero:"Oldingi qahramon",next_hero:"Keyingi qahramon",menu_foot:"2–5 kishilik onlayn horror",
+ back:"‹ Orqaga",how_play:"Qanday o'ynaysiz?",online:"Do'stlar bilan onlayn",online_sub:"Ochiq bazaga qo'shiling yoki o'z bazangizni oching",players25:"2–5 o'yinchi",solo:"Yolg'iz",solo_sub:"Ism va qahramon tanlab, darhol boshlang",
+ open_room:"Ochiq baza",open_room_sub:"Kod kerak emas — bo'sh joyi bor bazaga avtomatik qo'shilasiz. Hech kim bo'lmasa, o'zingiz ochasiz va kutasiz.",create_room:"Baza ochish",create_room_sub:"yopiq, faqat kod bilan",join_room:"Bazaga kirish",join:"Kirish",server:"Server",code4:"4 xonali kod",
+ character:"Personaj",your_name:"Ismingiz",name_ph:"Masalan: Lochinbek",room_code:"Baza kodi",cont:"Davom etish",back_btn:"Orqaga",
+ t_create:"Baza ochish",t_join:"Bazaga kirish",t_solo:"Yolg'iz o'ynash",t_open:"Ochiq baza",
+ err_name:"Ismingizni yozing.",err_code:"4 xonali baza kodini yozing.",opening:"Baza ochilmoqda…",open_fail:"Baza ochilmadi. Internetni tekshirib, qayta urining.",connecting:"Ulanmoqda…",not_found:"Bunday kodli baza topilmadi.",conn_fail:"Ulanib bo'lmadi. Kodni va internetni tekshiring.",
+ rooms_title:"Bo'sh joyi bor bazalar",rooms_eb:"Ochiq bazalar",searching:"Ochiq bazalar qidirilmoqda…",quick_join:"Tezkor qo'shilish",col_host:"Baza egasi",col_players:"O'yinchilar",col_ping:"Ping",col_state:"Holat",join_btn:"Qo'shilish",waiting_state:"Kutmoqda",rooms_none:"Hozircha ochiq baza yo'q — siz uchun yangi ochiq baza ochilmoqda…",rooms_found:"{n} ta baza topildi. Eng yaxshisiga ulanmoqda…",own_open:"O'z ochiq bazamni ochish ›",rooms_hint:"Mos baza topilmasa, sizga ochiq baza ochiladi va kimdir kirguncha kutasiz.",
+ your_room:"Sizning bazangiz",room:"Baza",open_badge:"Ochiq — kod shart emas",closed_badge:"Yopiq — kod bilan",copy:"Nusxalash",copied:"Kod nusxalandi",code_hint:"Shu kodni do'stlaringizga yuboring. Ular \"Bazaga kirish\"ga kodni yozishadi.",open_hint:"Ochiq baza: o'yinchilar kodsiz qo'shila oladi.",
+ lobby_count:"{n} / 5 o'yinchi",need2:"Boshlash uchun kamida 2 o'yinchi kerak.",wait_host:"Baza egasi o'yinni boshlashini kuting…",leave:"Chiqish",start:"O'yinni boshlash",empty_slot:"Bo'sh joy — o'yinchi kutilmoqda…",host_tag:"baza egasi",you:"siz",
+ chat:"Chat",chat_ph:"Xabar yozing…",chat_ph_pc:"Xabar yozing… (Enter)",send:"Yuborish",joined:"{n} bazaga qo'shildi",left:"{n} chiqib ketdi",
+ lang:"Til",gfx:"Grafika",gfx_low:"Past",gfx_mid:"O'rta",gfx_high:"Yuqori",gfx_hint:"Telefon qotsa — \"Past\"ni tanlang.",gfx_reload:"Grafika keyingi o'yinda o'zgaradi.",sound:"Ovoz",vol_game:"O'yin ovozi",vol_mon:"Mahluqlar ovozi",vol_mic:"Mikrofon ovozi",voice:"Ovozli chat",mic:"Mikrofon",talk_mode:"Gapirish usuli",talk_open:"Doim ochiq",talk_ptt:"Bosib turib gapirish",players_vol:"O'yinchilar ovozi",players_vol_none:"O'yinchilar shu yerda o'yin paytida chiqadi.",prox_hint:"Yaqindagi o'yinchi balandroq, uzoqdagisi pastroq eshitiladi.",save:"Saqlash",ptt_hint_pc:"Bosib turib gapirish: V tugmasi",
+ mic_denied:"Mikrofonga ruxsat berilmadi — boshqalarni eshitasiz, lekin sizni eshitishmaydi.",mic_on:"Mikrofon yoqildi",mic_off:"Mikrofon o'chirildi",talking:"Gapiryapsiz",is_talking:"{n} gapiryapti",
+ task:"Vazifa",o_key:"Kalitni toping",o_bat:"Akkumulyatorni toping",o_fix:"Garajdagi mashinani tuzating",o_go:"Mashinaga o'tirib qoching",o_cross:"Xoch (mahluqdan himoya)",players:"O'yinchilar",in_car:"mashinada",caught_s:"ushlandi",hidden_s:"yashiringan",
+ run:"YUGUR",light:"FONAR",get_out:"Tushish",drive:"Haydash",you_hidden:"Yashiringansiz",caught_you:"Sizni ushlab oldi",watching:"Kuzatyapsiz:",next_player:"Boshqa o'yinchi",
+ i_open:"Ochish",i_close:"Yopish",i_door_open:"Eshikni ochish",i_door_close:"Eshikni yopish",i_take_key:"Kalitni olish",i_take_bat:"Akkumulyatorni olish",i_take_cross:"Xochni olish",i_hide:"Yashirinish",i_unhide:"Chiqish",i_put_bat:"Akkumulyatorni o'rnatish",i_need_bat:"Akkumulyator kerak",i_put_key:"Kalitni solish",i_need_key:"Kalit kerak",i_seat:"Mashinaga o'tirish",
+ chip_key:"Kalit",chip_bat:"Akkumulyator",chip_cross:"Xoch",
+ m_bat:"{n} akkumulyatorni o'rnatdi",m_key:"{n} kalitni soldi",m_seat:"{n} mashinaga o'tirdi",
+ got_key:"Kalitni oldingiz!",got_bat:"Akkumulyatorni oldingiz! Uni garajdagi mashinaga olib boring.",got_cross:"Xochni oldingiz! Mahluq tashlansa, u sizni bir marta himoya qiladi.",found_key:"{n} kalitni topdi!",found_bat:"{n} akkumulyatorni topdi!",found_cross:"{n} xochni topdi!",
+ hunt:"Ular ovga chiqdi. Yashiriningiz!",gone:"Mahluq g'oyib bo'ldi… hozircha.",caught:"{n} ushlandi!",gave_up:"Mahluq sizni topa olmadi va ketdi.",heard:"Mahluq ovozingizni eshitdi!",banish_me:"Xoch porladi! Mahluq yonib kul bo'ldi.",banish:"{n}ning xochi mahluqni yo'q qildi!",
+ start_solo:"Kalit va akkumulyatorni toping, mashinani tuzating.",start_mp:"Hamma shu yerda. Kalit va akkumulyatorni toping.",controls:"WASD — yurish, Shift — yugurish, E — qo'l, F — fonar, Enter — chat, V — gapirish, Esc — pauza.",
+ host_lost:"Baza egasi bilan aloqa uzildi",full:"Baza to'la yoki o'yin boshlangan",preview_only:"Bu sinov sahifasi: bu yerda faqat yolg'iz o'ynash ishlaydi.",
+ end:"O'yin tugadi",win_t:"Tabriklaymiz! Siz qochib qutuldingiz!",win_x:"Eski mashina o't oldi va siz qorong'ilikdan chiqib ketdingiz. Uy ortda qoldi.",left_t:"Ular sizsiz ketishdi…",left_x:"Do'stlaringiz mashinada qochib ketishdi. Siz esa shu uyda qoldingiz.",lose_t:"Hech kim qutulmadi",lose_x:"Mahluqlar barchangizni tutib oldi. Uy yana jim bo'lib qoldi.",r_esc:"Qochdi",r_stay:"Qoldi",r_caught:"Ushlandi",to_menu:"Bosh menyuga",time_lbl:"Vaqt: {t}",
+ pause:"Pauza",pause_t:"O'yin davom etmoqda",pause_x:"Onlayn o'yinda vaqt to'xtamaydi — mahluqlar sizni izlashda davom etadi.",pause_solo:"O'yin to'xtatildi.",resume:"Davom etish",quit:"O'yindan chiqish",
+ ping:"Ping",ms:"ms"
+},
+ru:{
+ boot_tag:"Онлайн-хоррор на 2–5 игроков",boot_loading:"Дом загружается…",boot_wait:"Подождите…",boot_enter:"Войти в игру",boot_tip:"Рекомендуем играть в наушниках.",boot_err:"Ошибка загрузки: обновите страницу.",
+ skip:"Пропустить ›",
+ intro1:"Осень 1997 года. В этом доме на окраине жила семья.",intro2:"Однажды ночью они бесследно исчезли. В подвале нашли лишь следы когтей.",intro3:"С тех пор соседи каждую ночь слышат из дома крики.",intro4:"Вы заблудились и забрели в этот двор. Телефоны не работают.",intro5:"Старая машина в гараже — единственное спасение. Нужны ключ и аккумулятор.",intro6:"Торопитесь. Оно уже видит вас.",
+ main_menu:"Главное меню",play:"Начать игру",play_sub:"одному или с друзьями",settings:"Настройки",settings_sub:"язык, графика, звук",hero:"Ваш герой",prev_hero:"Предыдущий герой",next_hero:"Следующий герой",menu_foot:"Онлайн-хоррор на 2–5 игроков",
+ back:"‹ Назад",how_play:"Как будете играть?",online:"С друзьями онлайн",online_sub:"Войдите в открытую комнату или создайте свою",players25:"2–5 игроков",solo:"Одному",solo_sub:"Выберите имя и героя и начинайте",
+ open_room:"Открытая комната",open_room_sub:"Код не нужен — вы автоматически попадёте в комнату со свободным местом. Если никого нет, комната откроется для вас.",create_room:"Создать комнату",create_room_sub:"закрытая, только по коду",join_room:"Войти по коду",join:"Войти",server:"Сервер",code4:"Код из 4 цифр",
+ character:"Персонаж",your_name:"Ваше имя",name_ph:"Например: Алекс",room_code:"Код комнаты",cont:"Продолжить",back_btn:"Назад",
+ t_create:"Создать комнату",t_join:"Войти в комнату",t_solo:"Играть одному",t_open:"Открытая комната",
+ err_name:"Введите имя.",err_code:"Введите код комнаты из 4 цифр.",opening:"Комната создаётся…",open_fail:"Не удалось создать комнату. Проверьте интернет.",connecting:"Подключение…",not_found:"Комната с таким кодом не найдена.",conn_fail:"Не удалось подключиться. Проверьте код и интернет.",
+ rooms_title:"Комнаты со свободными местами",rooms_eb:"Открытые комнаты",searching:"Поиск открытых комнат…",quick_join:"Быстрый вход",col_host:"Хозяин",col_players:"Игроки",col_ping:"Пинг",col_state:"Статус",join_btn:"Войти",waiting_state:"Ожидание",rooms_none:"Открытых комнат пока нет — создаём для вас новую…",rooms_found:"Найдено комнат: {n}. Подключаемся к лучшей…",own_open:"Открыть свою комнату ›",rooms_hint:"Если подходящей комнаты нет, откроется ваша, и вы подождёте игроков.",
+ your_room:"Ваша комната",room:"Комната",open_badge:"Открытая — без кода",closed_badge:"Закрытая — по коду",copy:"Копировать",copied:"Код скопирован",code_hint:"Отправьте код друзьям. Они введут его в «Войти по коду».",open_hint:"Открытая комната: игроки входят без кода.",
+ lobby_count:"{n} / 5 игроков",need2:"Для начала нужно минимум 2 игрока.",wait_host:"Ждите, пока хозяин начнёт игру…",leave:"Выйти",start:"Начать игру",empty_slot:"Свободное место — ждём игрока…",host_tag:"хозяин",you:"вы",
+ chat:"Чат",chat_ph:"Напишите сообщение…",chat_ph_pc:"Напишите сообщение… (Enter)",send:"Отправить",joined:"{n} присоединился",left:"{n} вышел",
+ lang:"Язык",gfx:"Графика",gfx_low:"Низкая",gfx_mid:"Средняя",gfx_high:"Высокая",gfx_hint:"Если телефон тормозит — выберите «Низкая».",gfx_reload:"Графика изменится в следующей игре.",sound:"Звук",vol_game:"Громкость игры",vol_mon:"Громкость монстров",vol_mic:"Громкость микрофона",voice:"Голосовой чат",mic:"Микрофон",talk_mode:"Режим речи",talk_open:"Всегда включён",talk_ptt:"Нажать и говорить",players_vol:"Громкость игроков",players_vol_none:"Игроки появятся здесь во время игры.",prox_hint:"Близких игроков слышно громче, дальних — тише.",save:"Сохранить",ptt_hint_pc:"Нажать и говорить: клавиша V",
+ mic_denied:"Нет доступа к микрофону — вы слышите других, но вас не слышно.",mic_on:"Микрофон включён",mic_off:"Микрофон выключен",talking:"Вы говорите",is_talking:"{n} говорит",
+ task:"Задание",o_key:"Найдите ключ",o_bat:"Найдите аккумулятор",o_fix:"Почините машину в гараже",o_go:"Садитесь в машину и бегите",o_cross:"Крест (защита от монстра)",players:"Игроки",in_car:"в машине",caught_s:"пойман",hidden_s:"прячется",
+ run:"БЕГ",light:"ФОНАРЬ",get_out:"Выйти",drive:"Ехать",you_hidden:"Вы спрятались",caught_you:"Вас поймали",watching:"Наблюдаете:",next_player:"Другой игрок",
+ i_open:"Открыть",i_close:"Закрыть",i_door_open:"Открыть дверь",i_door_close:"Закрыть дверь",i_take_key:"Взять ключ",i_take_bat:"Взять аккумулятор",i_take_cross:"Взять крест",i_hide:"Спрятаться",i_unhide:"Выйти",i_put_bat:"Установить аккумулятор",i_need_bat:"Нужен аккумулятор",i_put_key:"Вставить ключ",i_need_key:"Нужен ключ",i_seat:"Сесть в машину",
+ chip_key:"Ключ",chip_bat:"Аккумулятор",chip_cross:"Крест",
+ m_bat:"{n} установил аккумулятор",m_key:"{n} вставил ключ",m_seat:"{n} сел в машину",
+ got_key:"Вы взяли ключ!",got_bat:"Вы взяли аккумулятор! Отнесите его к машине в гараже.",got_cross:"Вы взяли крест! Если монстр нападёт, он защитит вас один раз.",found_key:"{n} нашёл ключ!",found_bat:"{n} нашёл аккумулятор!",found_cross:"{n} нашёл крест!",
+ hunt:"Они вышли на охоту. Прячьтесь!",gone:"Монстр исчез… пока.",caught:"{n} пойман!",gave_up:"Монстр не нашёл вас и ушёл.",heard:"Монстр услышал ваш голос!",banish_me:"Крест вспыхнул! Монстр сгорел дотла.",banish:"Крест игрока {n} уничтожил монстра!",
+ start_solo:"Найдите ключ и аккумулятор, почините машину.",start_mp:"Все здесь. Найдите ключ и аккумулятор.",controls:"WASD — ходьба, Shift — бег, E — рука, F — фонарь, Enter — чат, V — говорить, Esc — пауза.",
+ host_lost:"Связь с хозяином комнаты потеряна",full:"Комната заполнена или игра уже началась",preview_only:"Это тестовая страница: здесь работает только одиночная игра.",
+ end:"Игра окончена",win_t:"Поздравляем! Вы сбежали!",win_x:"Старая машина завелась, и вы вырвались из темноты. Дом остался позади.",left_t:"Они уехали без вас…",left_x:"Друзья сбежали на машине. А вы остались в этом доме.",lose_t:"Никто не спасся",lose_x:"Монстры поймали всех. В доме снова тихо.",r_esc:"Сбежал",r_stay:"Остался",r_caught:"Пойман",to_menu:"В главное меню",time_lbl:"Время: {t}",
+ pause:"Пауза",pause_t:"Игра продолжается",pause_x:"В онлайн-игре время не останавливается — монстры продолжают искать вас.",pause_solo:"Игра на паузе.",resume:"Продолжить",quit:"Выйти из игры",
+ ping:"Пинг",ms:"мс"
+},
+en:{
+ boot_tag:"Online horror for 2–5 players",boot_loading:"Loading the house…",boot_wait:"Please wait…",boot_enter:"Enter the game",boot_tip:"Headphones recommended.",boot_err:"Loading failed: please refresh the page.",
+ skip:"Skip ›",
+ intro1:"Autumn, 1997. A family lived in this house at the edge of town.",intro2:"One night they vanished without a trace. Only claw marks were found in the basement.",intro3:"Since then, neighbours hear screams from the house every night.",intro4:"You got lost and wandered into this yard. Phones don't work.",intro5:"The old car in the garage is the only way out. It needs a key and a battery.",intro6:"Hurry. It is already watching you.",
+ main_menu:"Main menu",play:"Start game",play_sub:"alone or with friends",settings:"Settings",settings_sub:"language, graphics, sound",hero:"Your character",prev_hero:"Previous character",next_hero:"Next character",menu_foot:"Online horror for 2–5 players",
+ back:"‹ Back",how_play:"How will you play?",online:"Online with friends",online_sub:"Join an open room or open your own",players25:"2–5 players",solo:"Alone",solo_sub:"Pick a name and character and start right away",
+ open_room:"Open room",open_room_sub:"No code needed — you join a room with a free slot automatically. If there is none, one opens for you.",create_room:"Create room",create_room_sub:"private, code only",join_room:"Join with code",join:"Join",server:"Server",code4:"4-digit code",
+ character:"Character",your_name:"Your name",name_ph:"For example: Alex",room_code:"Room code",cont:"Continue",back_btn:"Back",
+ t_create:"Create room",t_join:"Join room",t_solo:"Play alone",t_open:"Open room",
+ err_name:"Enter your name.",err_code:"Enter the 4-digit room code.",opening:"Creating the room…",open_fail:"Could not create the room. Check your internet.",connecting:"Connecting…",not_found:"No room with that code.",conn_fail:"Could not connect. Check the code and your internet.",
+ rooms_title:"Rooms with free slots",rooms_eb:"Open rooms",searching:"Searching for open rooms…",quick_join:"Quick join",col_host:"Host",col_players:"Players",col_ping:"Ping",col_state:"Status",join_btn:"Join",waiting_state:"Waiting",rooms_none:"No open rooms yet — opening a new one for you…",rooms_found:"Found {n} rooms. Joining the best one…",own_open:"Open my own room ›",rooms_hint:"If no room fits, an open room is created for you and you wait for players.",
+ your_room:"Your room",room:"Room",open_badge:"Open — no code needed",closed_badge:"Private — code only",copy:"Copy",copied:"Code copied",code_hint:"Send this code to your friends. They enter it under \"Join with code\".",open_hint:"Open room: players can join without a code.",
+ lobby_count:"{n} / 5 players",need2:"At least 2 players are needed to start.",wait_host:"Waiting for the host to start…",leave:"Leave",start:"Start game",empty_slot:"Free slot — waiting for a player…",host_tag:"host",you:"you",
+ chat:"Chat",chat_ph:"Type a message…",chat_ph_pc:"Type a message… (Enter)",send:"Send",joined:"{n} joined",left:"{n} left",
+ lang:"Language",gfx:"Graphics",gfx_low:"Low",gfx_mid:"Medium",gfx_high:"High",gfx_hint:"If your phone lags, choose \"Low\".",gfx_reload:"Graphics change in the next game.",sound:"Sound",vol_game:"Game volume",vol_mon:"Monster volume",vol_mic:"Microphone volume",voice:"Voice chat",mic:"Microphone",talk_mode:"Talk mode",talk_open:"Always on",talk_ptt:"Push to talk",players_vol:"Player volume",players_vol_none:"Players appear here during a game.",prox_hint:"Nearby players sound louder, distant ones quieter.",save:"Save",ptt_hint_pc:"Push to talk: V key",
+ mic_denied:"No microphone access — you can hear others, but they can't hear you.",mic_on:"Microphone on",mic_off:"Microphone off",talking:"You are talking",is_talking:"{n} is talking",
+ task:"Objective",o_key:"Find the key",o_bat:"Find the battery",o_fix:"Fix the car in the garage",o_go:"Get in the car and escape",o_cross:"Cross (protects from a monster)",players:"Players",in_car:"in the car",caught_s:"caught",hidden_s:"hiding",
+ run:"RUN",light:"LIGHT",get_out:"Get out",drive:"Drive",you_hidden:"You are hiding",caught_you:"You were caught",watching:"Watching:",next_player:"Next player",
+ i_open:"Open",i_close:"Close",i_door_open:"Open door",i_door_close:"Close door",i_take_key:"Take the key",i_take_bat:"Take the battery",i_take_cross:"Take the cross",i_hide:"Hide",i_unhide:"Come out",i_put_bat:"Install the battery",i_need_bat:"Battery needed",i_put_key:"Insert the key",i_need_key:"Key needed",i_seat:"Get in the car",
+ chip_key:"Key",chip_bat:"Battery",chip_cross:"Cross",
+ m_bat:"{n} installed the battery",m_key:"{n} inserted the key",m_seat:"{n} got in the car",
+ got_key:"You got the key!",got_bat:"You got the battery! Take it to the car in the garage.",got_cross:"You got the cross! It will protect you once if a monster attacks.",found_key:"{n} found the key!",found_bat:"{n} found the battery!",found_cross:"{n} found the cross!",
+ hunt:"They are hunting. Hide!",gone:"The monster vanished… for now.",caught:"{n} was caught!",gave_up:"The monster couldn't find you and left.",heard:"The monster heard your voice!",banish_me:"The cross blazed! The monster burned to ash.",banish:"{n}'s cross destroyed a monster!",
+ start_solo:"Find the key and the battery, fix the car.",start_mp:"Everyone is here. Find the key and the battery.",controls:"WASD — move, Shift — run, E — hand, F — flashlight, Enter — chat, V — talk, Esc — pause.",
+ host_lost:"Lost connection to the host",full:"The room is full or the game has started",preview_only:"This is a preview page: only solo play works here.",
+ end:"Game over",win_t:"Congratulations! You escaped!",win_x:"The old car started and you drove out of the darkness. The house is behind you.",left_t:"They left without you…",left_x:"Your friends escaped in the car. You stayed in the house.",lose_t:"Nobody escaped",lose_x:"The monsters caught all of you. The house is quiet again.",r_esc:"Escaped",r_stay:"Stayed",r_caught:"Caught",to_menu:"Main menu",time_lbl:"Time: {t}",
+ pause:"Pause",pause_t:"The game goes on",pause_x:"Online, time doesn't stop — the monsters keep looking for you.",pause_solo:"Game paused.",resume:"Resume",quit:"Quit game",
+ ping:"Ping",ms:"ms"
+}};
+let L=(()=>{try{return localStorage.getItem('qu_lang')}catch(e){return null}})();
+if(!D[L])L='uz';
+function T(k,v){let s=(D[L]&&D[L][k])||D.uz[k]||k;if(v)for(const x in v)s=s.split('{'+x+'}').join(v[x]);return s}
+function apply(root){(root||document).querySelectorAll('[data-i]').forEach(e=>{e.textContent=T(e.dataset.i)});
+ (root||document).querySelectorAll('[data-ip]').forEach(e=>{e.placeholder=T(e.dataset.ip)});
+ (root||document).querySelectorAll('[data-ia]').forEach(e=>{e.setAttribute('aria-label',T(e.dataset.ia))});
+ document.documentElement.lang=L==='uz'?'uz':L}
+window.I18N={T,apply,get lang(){return L},set(l){if(!D[l])return;L=l;try{localStorage.setItem('qu_lang',l)}catch(e){}apply();if(window.I18N.onChange)window.I18N.onChange()}};
+window.T=T;
+})();
