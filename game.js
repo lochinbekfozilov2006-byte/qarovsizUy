@@ -401,7 +401,9 @@ addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;keys[e.code]
  if(e.code==='KeyE'||e.code==='Space'){e.preventDefault();doInteract()}if(e.code==='KeyF')toggleFlash();if(e.code==='Escape'||e.code==='KeyP')openPause();
  if(e.code==='Enter'&&N.mode!=='solo'){e.preventDefault();if(document.pointerLockElement)document.exitPointerLock();Object.keys(keys).forEach(k=>keys[k]=0);$('#hudChat').classList.remove('mini');$('#hudForm input').focus()}});
 addEventListener('keyup',e=>{keys[e.code]=0;if(e.code==='KeyV')VC.setPttHeld(false)});
-$('#hudForm input').addEventListener('blur',()=>{if(TOUCH)$('#hudChat').classList.add('mini')});
+$('#hudForm input').addEventListener('blur',()=>{if(TOUCH)setTimeout(()=>{if(document.activeElement!==$('#hudForm input'))$('#hudChat').classList.add('mini')},350)});
+/* keep the keyboard/input focused while the send button is tapped, so the tap is not lost */
+document.querySelectorAll('form[data-chat] button').forEach(b=>{b.addEventListener('pointerdown',e=>e.preventDefault());b.addEventListener('mousedown',e=>e.preventDefault())});
 $('#hudChat').addEventListener('click',e=>{if(TOUCH&&$('#hudChat').classList.contains('mini')){$('#hudChat').classList.remove('mini');$('#hudForm input').focus()}});
 function toggleFlash(){P.fl=!P.fl;flash.intensity=P.fl?2.6:0;$('#flBtn').setAttribute('aria-pressed',P.fl)}
 $('#flBtn').onclick=toggleFlash;
