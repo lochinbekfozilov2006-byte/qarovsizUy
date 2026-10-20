@@ -191,19 +191,21 @@ function joinRoom(code,onErr){$('#setupGo').disabled=true;$('#setupErr').textCon
 
 /* ---------- open rooms: find one with a free slot or open our own ---------- */
 let roomsRun=0,roomsFound=[];
-function startRooms(){const run=++roomsRun;show('rooms');roomsFound=[];renderRooms();$('#roomsStatus').textContent=T('searching');$('#roomsQuick').disabled=true;
+function startRooms(again){const run=++roomsRun;if(!again){show('rooms');roomsFound=[];renderRooms();$('#roomsStatus').textContent=T('searching')}$('#roomsQuick').disabled=true;
  N.scan(found=>{if(run!==roomsRun)return;roomsFound=found;renderRooms();const ok=found.filter(r=>r.phase==='lobby'&&r.players<r.max).sort((a,b)=>a.ping-b.ping);
-  if(ok.length){$('#roomsStatus').textContent=T('rooms_found',{n:ok.length});setTimeout(()=>{if(run===roomsRun&&curScreen==='rooms')joinOpen(ok,0)},900)}
-  else{$('#roomsStatus').textContent=T('rooms_none');setTimeout(()=>{if(run===roomsRun&&curScreen==='rooms')hostOpenRoom()},700)}},
-  part=>{if(run!==roomsRun)return;roomsFound=part;renderRooms()})}
-function joinOpen(list,i){if(i>=list.length){hostOpenRoom();return}const r=list[i];roomsRun++;
+  $('#roomsStatus').textContent=ok.length?T('rooms_found',{n:ok.length}):T('rooms_none');
+  setTimeout(()=>{if(run===roomsRun&&curScreen==='rooms')startRooms(true)},9000)},
+  part=>{if(run!==roomsRun||again)return;roomsFound=part;renderRooms()})}
+function joinOpen(list,i){if(i>=list.length){$('#roomsStatus').textContent=T('err_join');startRooms(true);return}const r=list[i];roomsRun++;
  N.join('O'+(r.slot+1),err=>{if(err){N.close();joinOpen(list,i+1);return}me.id=N.myId;N.send({t:'hello',name:me.name,lg:I18N.lang,char:me.char});ST.phase='lobby';chatLog.length=0;showLobby()})}
 function hostOpenRoom(){roomsRun++;$('#roomsStatus').textContent=T('opening');N.hostOpen((err)=>{if(err){$('#roomsStatus').textContent=T('open_fail');return}becomeHost(me.name)})}
 function renderRooms(){const ok=roomsFound.filter(r=>r.phase==='lobby'&&r.players<r.max);$('#roomsQuick').disabled=!ok.length;
- $('#roomList').innerHTML=roomsFound.length?roomsFound.slice().sort((a,b)=>a.ping-b.ping).map(r=>'<div class="rrow"><b>'+FLAG(r.lg)+esc(r.name)+'</b><span>'+r.players+' / '+r.max+'</span><span><span class="pdot '+pingCls(r.ping)+'"></span> '+r.ping+' '+T('ms')+'</span><span class="st">'+(r.phase==='lobby'?T('waiting_state'):'…')+'</span><button data-slot="'+r.slot+'"'+(r.phase==='lobby'&&r.players<r.max?'':' disabled')+'>'+T('join_btn')+'</button></div>').join(''):'';
+ const html=roomsFound.length?roomsFound.slice().sort((a,b)=>a.ping-b.ping).map(r=>'<div class="rrow"><b>'+FLAG(r.lg)+esc(r.name)+'</b><span>'+r.players+' / '+r.max+'</span><span><span class="pdot '+pingCls(r.ping)+'"></span> '+r.ping+' '+T('ms')+'</span><span class="st">'+(r.phase==='lobby'?T('waiting_state'):'…')+'</span><button data-slot="'+r.slot+'"'+(r.phase==='lobby'&&r.players<r.max?'':' disabled')+'>'+T('join_btn')+'</button></div>').join(''):'';
+ /* only touch the DOM when something changed, so a tap on "Join" is never lost to a refresh */
+ if(html===renderRooms.last)return;renderRooms.last=html;$('#roomList').innerHTML=html;
  $('#roomList').querySelectorAll('button[data-slot]').forEach(b=>b.onclick=()=>{const r=roomsFound.find(x=>x.slot===+b.dataset.slot);if(r)joinOpen([r],0)})}
 $('#roomsQuick').onclick=()=>{const ok=roomsFound.filter(r=>r.phase==='lobby'&&r.players<r.max).sort((a,b)=>a.ping-b.ping);if(ok.length)joinOpen(ok,0)};
-$('#roomsOwn').onclick=()=>hostOpenRoom();
+$('#roomsOwn').onclick=()=>hostOpenRoom();$('#roomsRefresh').onclick=()=>startRooms();
 $('#roomsBack').onclick=()=>{roomsRun++;N.close();show('online')};
 
 /* ---------- lobby ---------- */
@@ -213,12 +215,16 @@ function renderLobby(){if(curScreen!=='lobby')return;const ids=Object.keys(ST.pl
  $('#lobbyBadge').textContent=N.open?T('open_badge'):T('closed_badge');$('#lobbyBadge').className='badge '+(N.open?'ok':'lock');
  $('#codeWrap').hidden=N.open;$('#lobbyCode').textContent=N.code||'----';$('#lobbyHint').textContent=T('code_hint');
  const myPing=host?0:N.ping;$('#lobbyPing').textContent=host?T('host_tag'):(myPing+' '+T('ms'));
- const rows=[];for(let k=0;k<MAXP;k++){const id=ids[k];if(!id){rows.push('<li class="empty">'+T('empty_slot')+'</li>');continue}const p=ST.players[id];const pg=id==='h'?0:(p.ping||0);
-  const talk=id===me.id?VC.speaking:VC.isTalking(id);
-  rows.push('<li><img src="'+($('#thumb_'+p.char).src||'')+'" alt=""><span class="nm">'+FLAG(p.lg)+esc(p.name)+'<i class="muted">'+(id==='h'?'('+T('host_tag')+(id===me.id?', '+T('you'):'')+')':id===me.id?'('+T('you')+')':'')+'</i></span>'+
-   '<svg class="mic'+(talk?' on':'')+'" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>'+
-   '<span class="pg"><span class="pdot '+pingCls(pg)+'"></span>'+(id==='h'?'—':pg+' '+T('ms'))+'</span></li>')}
- $('#lobbyList').innerHTML=rows.join('');
+ const rows=[],dyn=[];for(let k=0;k<MAXP;k++){const id=ids[k];if(!id){rows.push('<li class="empty">'+T('empty_slot')+'</li>');continue}const p=ST.players[id];const pg=id==='h'?0:(p.ping||0);
+  const talk=false;dyn.push([id,pg]);
+  rows.push('<li data-id="'+esc(id)+'"><img src="'+($('#thumb_'+p.char).src||'')+'" alt=""><span class="nm">'+FLAG(p.lg)+esc(p.name)+'<i class="muted">'+(id==='h'?'('+T('host_tag')+(id===me.id?', '+T('you'):'')+')':id===me.id?'('+T('you')+')':'')+'</i></span>'+
+   (id===me.id?'<button class="vbtn '+(VC.on&&!VC.denied?(talk?'on':''):'off')+'" data-mymic title="'+esc(T('mic'))+'">'+MIC_ICON(!(VC.on&&!VC.denied))+'</button>'
+    :(()=>{const m=VC.isMuted(p.name);return '<button class="vbtn'+(m?' muted':talk?' on':'')+'" data-mute="'+esc(p.name)+'" title="'+esc(T(m?'unmute_p':'mute_p'))+'">'+'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/>'+(m?'<path d="M16 9l5 6M21 9l-5 6"/>':'<path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>')+'</svg>'+'</button>'})())+
+   '<span class="pg"></span></li>')}
+ const lh=rows.join('');if(lh!==renderLobby.last){renderLobby.last=lh;$('#lobbyList').innerHTML=lh}renderLobbyMic();
+ /* talking light and ping are patched in place (the row itself is only rebuilt when it really changes) */
+ dyn.forEach(([id,pg])=>{const li=$('#lobbyList').querySelector('li[data-id="'+id+'"]');if(!li)return;const talk=id===me.id?VC.speaking:VC.isTalking(id);const b=li.querySelector('.vbtn');if(b)b.classList.toggle('on',talk&&!b.classList.contains('muted')&&!b.classList.contains('off'));
+  const ph='<span class="pdot '+pingCls(pg)+'"></span>'+(id==='h'?'—':pg+' '+T('ms'));const pe=li.querySelector('.pg');if(pe&&pe.innerHTML!==ph)pe.innerHTML=ph});
  const n=ids.length;$('#lobbyCount').textContent=T('lobby_count',{n});$('#lobbyStart').hidden=!host;$('#lobbyStart').disabled=n<2;$('#lobbyNeed').hidden=n>=2||!host;$('#lobbyWait').hidden=host}
 const FLAGS={uz:'<svg class="flag" viewBox="0 0 18 12"><rect width="18" height="12" fill="#fff"/><rect width="18" height="4" fill="#0099b5"/><rect y="8" width="18" height="4" fill="#1eb53a"/><rect y="3.7" width="18" height=".5" fill="#ce1126"/><rect y="7.8" width="18" height=".5" fill="#ce1126"/><circle cx="3" cy="2" r="1.3" fill="#fff"/><circle cx="3.5" cy="2" r="1.1" fill="#0099b5"/></svg>',
 ru:'<svg class="flag" viewBox="0 0 18 12"><rect width="18" height="4" fill="#fff"/><rect y="4" width="18" height="4" fill="#0039a6"/><rect y="8" width="18" height="4" fill="#d52b1e"/></svg>',
@@ -279,7 +285,7 @@ function startGame(s){endShown=false;applyState(s);ST.phase='play';ST.t=0;show('
  const ids=Object.keys(ST.players);const idx=Math.max(0,ids.indexOf(me.id));P.pos.set(-2+idx*1,0,87);P.yaw=0;P.pitch=0;P.alive=true;P.hide=-1;P.inCar=false;P.fl=true;P.stamina=1;flash.intensity=2.6;
  ids.forEach(id=>{if(id!==me.id)remoteFor(id)});
  const online=N.mode!=='solo';$('#hudChat').hidden=!online;$('#micWrap').hidden=!online;$('#hudChat').classList.toggle('mini',TOUCH);renderMic();
- if(online)VC.sync(ids,me.id);
+ if(online){VC.sync(ids,me.id);if(!VC.on||VC.denied)setTimeout(()=>toast(T('mic_off_hint'),4000),2500)}
  if(N.mode!=='client'){hostT={next:'scare',at:FAST?8:60,huntAt:FAST?20:300};MSS.forEach(m=>{m.mode='away';m.dead=false;m.pos.set(0,-50,0)})}
  renderObjectives();renderPlayers();S.ambience(true);toast(N.mode==='solo'?T('start_solo'):T('start_mp'),4000);
  if(!TOUCH)setTimeout(()=>toast(T('controls'),6500),4200)}
@@ -474,14 +480,25 @@ $('#endBack').onclick=()=>quitToMenu();
 function renderObjectives(){const it=ST.items,c=ST.car;const row=(ok,t,cls)=>'<li class="'+(ok?'ok':'')+(cls?' '+cls:'')+'"><span></span>'+t+'</li>';const cr=it.cross||{};
  $('#obj').innerHTML=row(it.key.holder||it.key.inst,T('o_key'))+row(it.bat.holder||it.bat.inst,T('o_bat'))+row(c.key&&c.bat,T('o_fix'))+row(false,T('o_go'))+(cr.inst&&!cr.holder?'':row(!!cr.holder,T('o_cross'),'opt'));
  $('#hold').innerHTML=(it.key.holder===me.id?'<span class="chipI">'+T('chip_key')+'</span>':'')+(it.bat.holder===me.id?'<span class="chipI">'+T('chip_bat')+'</span>':'')+(cr.holder===me.id?'<span class="chipI">'+T('chip_cross')+'</span>':'')}
+function MIC_ICON(off){return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'+(off?'<path d="M4 4l16 16"/>':'')+'</svg>'}
+function toggleMyMic(){VC.setOn(!VC.on);toast(VC.on?T('mic_on'):T('mic_off'),1600);renderMic();renderLobbyMic();renderLobby()}
+function toggleMute(name){VC.setMuted(name,!VC.isMuted(name));toast((VC.isMuted(name)?T('muted_s'):T('unmute_p'))+': '+name,1400);renderLobby();renderPlayers();if(curScreen==='settings')renderPV()}
+function bindVoiceBtns(root){root.querySelectorAll('[data-mute]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleMute(b.dataset.mute)});root.querySelectorAll('[data-mymic]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleMyMic()})}
+function renderLobbyMic(){const b=$('#lobbyMic');if(!b)return;const on=VC.on&&!VC.denied;b.className='micTog '+(on?'on':'off');b.innerHTML=MIC_ICON(!on)+'<span>'+esc(T('mic_tap'))+': '+esc(on?T('on_s'):T('off_s'))+'</span>'}
+$('#lobbyMic').onclick=()=>toggleMyMic();
+$('#plist').addEventListener('click',e=>{const li=e.target.closest('[data-mute]');if(li)toggleMute(li.dataset.mute)});
+/* one delegated handler, so taps survive the list being redrawn */
+$('#lobbyList').addEventListener('click',e=>{const m=e.target.closest('[data-mute]');if(m){toggleMute(m.dataset.mute);return}if(e.target.closest('[data-mymic]'))toggleMyMic()});
+VC.onMic=()=>{renderMic();renderLobbyMic();if(curScreen==='lobby')renderLobby()};
 const MIC_SVG='<svg viewBox="0 0 24 24" aria-hidden="true" class="CL"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
 function renderPlayers(){const ids=Object.keys(ST.players);$('#plCount').textContent=ids.length+'/'+MAXP;const online=N.mode!=='solo';
- $('#plist').innerHTML=ids.map(id=>{const p=ST.players[id];const talk=online&&(id===me.id?VC.speaking:VC.isTalking(id));return '<li class="'+(p.alive?'':'dead')+'">'+(online?MIC_SVG.replace('CL',talk?'on':''):'')+FLAG(p.lg)+esc(p.name)+(id===me.id?' ('+T('you')+')':'')+'<i>'+(p.car?T('in_car'):!p.alive?T('caught_s'):p.hide>=0?T('hidden_s'):'')+'</i></li>'}).join('')}
+ const ph=ids.map(id=>{const p=ST.players[id];const talk=false;const mu=online&&id!==me.id&&VC.isMuted(p.name);return '<li data-id="'+esc(id)+'" class="'+(p.alive?'':'dead')+(mu?' muted':'')+'"'+(online&&id!==me.id?' data-mute="'+esc(p.name)+'" title="'+esc(T(mu?'unmute_p':'mute_p'))+'"':'')+'>'+(online?(mu?'<span class="mx">'+'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/>'+(1?'<path d="M16 9l5 6M21 9l-5 6"/>':'<path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>')+'</svg>'+'</span>':MIC_SVG.replace('CL',talk?'on':'')):'')+FLAG(p.lg)+esc(p.name)+(id===me.id?' ('+T('you')+')':'')+'<i>'+(mu?T('muted_s')+' ':'')+(p.car?T('in_car'):!p.alive?T('caught_s'):p.hide>=0?T('hidden_s'):'')+'</i></li>'}).join('');if(ph!==renderPlayers.last){renderPlayers.last=ph;$('#plist').innerHTML=ph}
+ if(online)ids.forEach(id=>{const sv=$('#plist').querySelector('li[data-id="'+id+'"] > svg');if(sv)sv.classList.toggle('on',id===me.id?VC.speaking:VC.isTalking(id))})}
 function renderMic(){const b=$('#micBtn');const on=VC.on&&!VC.denied;b.setAttribute('aria-pressed',VC.ptt?String(VC.pttHeld):String(on));b.classList.toggle('off',!on);$('#micLbl').textContent=!on?T('mic_off'):VC.ptt?T('talk_ptt'):(VC.speaking?T('talking'):T('mic'))}
 /* mic button: toggles the mic, or push-to-talk while held */
 $('#micBtn').addEventListener('pointerdown',e=>{if(VC.ptt){e.preventDefault();VC.setPttHeld(true);renderMic()}});
 ['pointerup','pointerleave','pointercancel'].forEach(ev=>$('#micBtn').addEventListener(ev,()=>{if(VC.ptt){VC.setPttHeld(false);renderMic()}}));
-$('#micBtn').addEventListener('click',()=>{if(VC.ptt)return;if(VC.denied){toast(T('mic_denied'),4000);return}VC.setOn(!VC.on);toast(VC.on?T('mic_on'):T('mic_off'),1600);renderMic()});
+$('#micBtn').addEventListener('click',()=>{if(VC.ptt&&VC.on)return;toggleMyMic()});
 
 /* ---------- pause / settings ---------- */
 function openPause(){if(ST.phase!=='play')return;if(document.pointerLockElement)document.exitPointerLock();Object.keys(keys).forEach(k=>keys[k]=0);joy.active=false;$('#joy').hidden=true;
@@ -501,7 +518,7 @@ function openSettings(from){setFrom=from;show('settings');segSet('#segLang',I18N
  $('#micSwitch').setAttribute('aria-checked',String(VC.on));$('#gfxNote').textContent=T('gfx_hint');$('#pttNote').hidden=TOUCH;renderPV()}
 function renderPV(){const ids=Object.keys(ST.players).filter(id=>id!==me.id);const box=$('#pvList');
  if(N.mode==='solo'||!ids.length){box.innerHTML='<span class="muted sm">'+T('players_vol_none')+'</span>';return}
- box.innerHTML=ids.map(id=>{const p=ST.players[id];const v=Math.round(VC.playerVol(p.name)*100);return '<label class="sl"><span>'+esc(p.name)+'</span><input type="range" min="0" max="150" value="'+v+'" data-pv="'+esc(p.name)+'"><output>'+v+'%</output></label>'}).join('');
+ box.innerHTML=ids.map(id=>{const p=ST.players[id];const v=Math.round(VC.playerVol(p.name)*100);const m=VC.isMuted(p.name);return '<div class="pvRow"><button class="vbtn'+(m?' muted':'')+'" data-mute="'+esc(p.name)+'" title="'+esc(T(m?'unmute_p':'mute_p'))+'">'+'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/>'+(m?'<path d="M16 9l5 6M21 9l-5 6"/>':'<path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>')+'</svg>'+'</button><label class="sl"><span>'+FLAG(p.lg)+esc(p.name)+'</span><input type="range" min="0" max="150" value="'+v+'" data-pv="'+esc(p.name)+'"><output>'+v+'%</output></label></div>'}).join('');bindVoiceBtns(box);
  box.querySelectorAll('input[data-pv]').forEach(i=>i.oninput=()=>{VC.setPlayerVol(i.dataset.pv,i.value/100);i.nextElementSibling.textContent=i.value+'%'})}
 document.querySelectorAll('#segLang button').forEach(b=>b.onclick=()=>{I18N.set(b.dataset.v);segSet('#segLang',b.dataset.v)});
 let gfxPending=null;
