@@ -53,4 +53,15 @@ async function body(req) {
 async function isAdmin(id) { id = String(id); if (id === OWNER_ID) return true; return (await redis('SISMEMBER', 'admins', id)) === 1; }
 function configured() { return !!(BOT() && R_URL() && R_TOK()); }
 
-module.exports = { OWNER_ID, CHANNEL, GAME_URL, TG_REWARD, redis, pipe, tg, hookSecret, day, cors, okDev, body, isAdmin, configured, BOT };
+/* the owner's game gets signed (room, name, time) tokens that other players can check (verified badge) */
+function ownSign(room, name, ts) { return crypto.createHmac('sha256', 'qu-own:' + BOT()).update(String(room || '') + '|' + String(name || '') + '|' + String(ts || 0)).digest('hex').slice(0, 32); }
+async function isOwnerDev(dev) { if (!okDev(dev)) return false; const id = await redis('GET', 'link:' + dev); return !!id && String(id) === OWNER_ID; }
+/* in-game announcements ("Xabarlar"): newest first, at most 50 */
+async function addNews(text, coins) {
+  text = String(text || '').replace(/\r/g, '').trim().slice(0, 1200); coins = Math.max(0, Math.min(100000, Math.floor(+coins || 0)));
+  if (!text) return null;
+  const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), text, coins, at: Date.now() };
+  await pipe([['LPUSH', 'news', JSON.stringify(item)], ['LTRIM', 'news', 0, 49]]);
+  return item;
+}
+module.exports = { ownSign, isOwnerDev, addNews, OWNER_ID, CHANNEL, GAME_URL, TG_REWARD, redis, pipe, tg, hookSecret, day, cors, okDev, body, isAdmin, configured, BOT };

@@ -40,7 +40,7 @@ async function panelMarkup(id) {
   const owner = String(id) === L.OWNER_ID;
   const rows = [[{ text: '📊 Statistika', callback_data: 'p:stat' }, { text: "🎁 Sovg'a kodi", callback_data: 'p:code' }],
     [{ text: '💰 Tanga berish', callback_data: 'p:give' }, { text: '👮 Adminlar', callback_data: 'p:admins' }]];
-  if (owner) rows.unshift([{ text: '📣 Post yuborish', callback_data: 'p:post' }]);
+  if (owner) rows.unshift([{ text: '📣 Post yuborish', callback_data: 'p:post' }, { text: "🎮 O'yinga xabar", callback_data: 'p:news' }]);
   rows.push([{ text: "🎮 O'yinni ochish", url: L.GAME_URL }]);
   return kb(rows);
 }
@@ -131,6 +131,14 @@ async function onMessage(m) {
       [{ text: '👥 Foydalanuvchilarga', callback_data: 'b:users:' + m.message_id }, { text: '📢 Kanalga', callback_data: 'b:ch:' + m.message_id }],
       [{ text: '👥 + 📢 Ikkalasiga', callback_data: 'b:all:' + m.message_id }], [{ text: '❌ Bekor', callback_data: 'p:home' }]]));
   }
+  if (st.k === 'news' && id === L.OWNER_ID) {
+    await setState(id, null);
+    let body = String(m.text || m.caption || '').trim(), coins = 0;
+    const g = body.match(/#(\d{1,6})\s*$/); if (g) { coins = +g[1]; body = body.slice(0, g.index).trim(); }
+    if (!body) return send(chat, "❗ Xabar matni bo'sh. Qaytadan: /panel → 🎮 O'yinga xabar");
+    const it = await L.addNews(body, coins);
+    return send(chat, "✅ <b>Xabar o'yinga yuborildi</b>\nHamma o'yinchilar «Xabarlar» bo'limida ko'radi" + (coins ? '\n🎁 Sovg\'a: ' + coins + ' tanga (har bir o\'yinchiga bir marta)' : '') + '.', kb([back]));
+  }
   if (st.k === 'code') {
     const n = text.match(/\d+/g) || [];
     const coins = +n[0], uses = +(n[1] || 1);
@@ -174,6 +182,8 @@ async function onCallback(q) {
   if (d === 'p:stat') { await ans(); return edit(chat, mid, await statsText(), kb([[{ text: '🔄 Yangilash', callback_data: 'p:stat' }], back])); }
   if (d === 'p:post') { if (!owner) return ans('⛔ Post yuborish faqat egasiga ruxsat etilgan', true); await setState(id, { k: 'post' }); await ans();
     return edit(chat, mid, '📣 <b>Post yuborish</b>\n\nYubormoqchi bo\'lgan postni shu yerga yuboring: matn, rasm, video yoki ovozli xabar — qanday bo\'lsa, shunday yetadi.\n\nBekor qilish: /bekor', kb([back])); }
+  if (d === 'p:news') { if (!owner) return ans('⛔ Faqat egasi', true); await setState(id, { k: 'news' }); await ans();
+    return edit(chat, mid, "🎮 <b>O'yinga xabar</b>\n\nXabar matnini yuboring — u o'yindagi «Xabarlar» bo'limida hamma o'yinchilarga sizning rasmingiz, ismingiz va tasdiq belgisi bilan chiqadi.\n\nSovg'a tanga qo'shish uchun oxiriga <code>#100</code> yozing.\nMasalan: <code>Bayramingiz bilan! #200</code>\n\nBekor: /bekor", kb([back])); }
   if (d.startsWith('b:')) { if (!owner) return ans('⛔', true); const [, target, src] = d.split(':'); await ans('Yuborilmoqda…'); return broadcast(chat, mid, Number(src), target); }
   if (d === 'p:code') { await setState(id, { k: 'code' }); await ans();
     const list = await L.redis('LRANGE', 'codes', 0, 4); const rows = [];

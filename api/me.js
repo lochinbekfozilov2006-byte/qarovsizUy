@@ -14,7 +14,8 @@ module.exports = async (req, res) => {
     const [tgId, grants] = await L.pipe([['GET', 'link:' + dev], ['LRANGE', 'grants:' + dev, 0, -1]]);
     if (grants && grants.length) await L.redis('DEL', 'grants:' + dev);
     const admin = tgId ? await L.isAdmin(tgId) : false;
+    const owner = !!tgId && String(tgId) === L.OWNER_ID;
     const tgDone = tgId ? (await L.redis('GET', 'tgrew:' + tgId)) === '1' : false;
-    res.status(200).json({ ok: true, bot, linked: !!tgId, admin, tgDone, grants: (grants || []).map(g => { try { return JSON.parse(g); } catch (e) { return null; } }).filter(Boolean) });
+    res.status(200).json({ ok: true, bot, linked: !!tgId, admin, owner, tgDone, grants: (grants || []).map(g => { try { return JSON.parse(g); } catch (e) { return null; } }).filter(Boolean) });
   } catch (e) { res.status(500).json({ ok: false, error: String(e.message || e) }); }
 };
