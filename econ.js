@@ -96,6 +96,14 @@ const SRV=window.SRV={dev:DEV,api:API,info:null,ok:false,onSync:null,
   .catch(()=>{SRV.ok=false;return null})},
  ev(t,on){try{fetch(API+'/api/ev',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dev:DEV,t,on:on?1:0}),keepalive:true}).catch(()=>{})}catch(e){}},
  redeem(code){return fetch(API+'/api/redeem',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dev:DEV,code})}).then(r=>r.json()).then(j=>{if(j&&j.ok&&j.coins>0){if(!s.admin)s.coins+=Math.floor(j.coins);save()}return j||{ok:false}}).catch(()=>({ok:false,error:'net'}))},
+ /* owner announcements ("Xabarlar") and the verified badge */
+ get owner(){return !!(SRV.info&&SRV.info.owner)},
+ news(){return fetch(API+'/api/news?dev='+DEV,{cache:'no-store'}).then(r=>r.json()).catch(()=>null)},
+ newsSend(text,coins){return fetch(API+'/api/news',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dev:DEV,text,coins})}).then(r=>r.json()).catch(()=>({ok:false,error:'net'}))},
+ newsDel(id){return fetch(API+'/api/news',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dev:DEV,del:id})}).then(r=>r.json()).catch(()=>({ok:false}))},
+ newsClaim(id){return fetch(API+'/api/news',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dev:DEV,claim:id})}).then(r=>r.json()).then(j=>{if(j&&j.ok&&j.coins>0){if(!s.admin)s.coins+=Math.floor(j.coins);save()}return j||{ok:false}}).catch(()=>({ok:false,error:'net'}))},
+ ownSign(room,name){return fetch(API+'/api/news?sign=1&dev='+DEV+'&r='+encodeURIComponent(room)+'&n='+encodeURIComponent(name),{cache:'no-store'}).then(r=>r.json()).then(j=>j&&j.ok?{tok:j.tok,ts:j.ts}:null).catch(()=>null)},
+ ownVerify(room,name,o){if(!o||!o.tok)return Promise.resolve(false);return fetch(API+'/api/news?verify='+encodeURIComponent(o.tok)+'&ts='+(+o.ts||0)+'&r='+encodeURIComponent(room)+'&n='+encodeURIComponent(name),{cache:'no-store'}).then(r=>r.json()).then(j=>!!(j&&j.owner)).catch(()=>false)},
  botLink(){const b=SRV.info&&SRV.info.bot;return b?'https://t.me/'+b+'?start=l_'+DEV:null}};
 setTimeout(()=>{SRV.sync();SRV.ev('open')},300);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')SRV.sync()});

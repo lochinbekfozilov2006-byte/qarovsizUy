@@ -57,7 +57,8 @@ A.makeCharacter=function(kind,opt){opt=opt||{};const def=opt.def||A.CHARS[kind]|
   }};
  ch.pose(0,0,0,0);return ch};
 /* floating name label */
-A.nameTag=function(text,color){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.font='600 30px "Barlow Semi Condensed",sans-serif';x.textAlign='center';x.fillStyle='rgba(0,0,0,.55)';const w=Math.min(250,x.measureText(text).width+24);x.fillRect(128-w/2,10,w,44);x.fillStyle=color||'#ece3d4';x.fillText(text,128,43);
+A.nameTag=function(text,color,badge){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.font='600 30px "Barlow Semi Condensed",sans-serif';x.textAlign='center';x.fillStyle='rgba(0,0,0,.55)';const tw=x.measureText(text).width,bw=badge?30:0;const w=Math.min(250,tw+24+bw);x.fillRect(128-w/2,10,w,44);x.fillStyle=color||'#ece3d4';x.fillText(text,128-bw/2,43);
+ if(badge){const cx=128-bw/2+tw/2+18,cy=32;x.fillStyle='#3b9cf2';x.beginPath();for(let i=0;i<16;i++){const a=i/16*Math.PI*2,r=i%2?10:12.5;x.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}x.fill();x.strokeStyle='#fff';x.lineWidth=3;x.lineCap='round';x.lineJoin='round';x.beginPath();x.moveTo(cx-5,cy);x.lineTo(cx-1.5,cy+4);x.lineTo(cx+5.5,cy-4);x.stroke()}
  const t=new THREE.CanvasTexture(c);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:false,transparent:true}));s.scale.set(1,.25,1);s.renderOrder=10;return s};
 
 /* ---------- humanoid monsters (Mixamo rigs, procedural animation) ---------- */

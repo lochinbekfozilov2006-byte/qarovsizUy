@@ -314,6 +314,28 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 #adDemo .adTR{position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.75)}#adDemo .adTR button{width:40px;height:40px;padding:0;border-radius:50%;font-size:20px;color:#fff;justify-content:center}#adDemo .adTR button:disabled{opacity:.35}
 #adDemo .adBar{position:absolute;left:16px;right:16px;bottom:24px;height:6px;border-radius:3px;background:rgba(255,255,255,.15);overflow:hidden}#adDemo .adBar i{display:block;height:100%;width:0;background:var(--ok)}
 .charCard{position:relative}.charCard .lockTag{position:absolute;top:8px;right:8px;display:flex;align-items:center;gap:4px;padding:3px 7px;border-radius:3px;background:rgba(9,8,11,.85);border:1px solid rgba(217,180,106,.6);color:#f0d69a;font-size:12px;font-weight:700}.charCard .lockTag .coin{width:13px;height:13px}.charCard.locked img{filter:grayscale(.6) brightness(.6)}
+#obj em.hint{font-style:normal;color:#9fc6ff;font-size:.92em}
+.vb{display:inline-block;width:15px;height:15px;vertical-align:-2px;margin-left:4px;flex:none}.vb .s{fill:#3b9cf2}.vb .c{fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.newsBadge{display:inline-block;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:9px;background:var(--blood);color:#fff;font-size:11px;line-height:18px;text-align:center;font-style:normal}
+#mNews small{display:flex;align-items:center}#mNews .ico{width:18px;height:18px}
+.newsWrap{max-width:640px}.nList{display:flex;flex-direction:column;gap:10px;padding:10px 0 20px}
+.nCard{display:flex;gap:12px;align-items:flex-end;padding:4px 0}
+.nWho{display:flex;flex-direction:column;align-items:center;width:84px;flex:none;gap:5px}.nWho img{width:84px;height:112px;border-radius:8px;object-fit:contain;background:#2a7fc0;box-shadow:0 2px 10px rgba(0,0,0,.45)}
+.nWho b{font-size:13px;display:flex;align-items:center;white-space:nowrap}
+.nBody{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:12px 14px 8px;background:#1d2733;border:1px solid rgba(110,160,220,.18);border-radius:16px 16px 16px 4px;box-shadow:0 2px 12px rgba(0,0,0,.35)}
+.nCard.new .nBody{border-color:rgba(59,156,242,.75);background:#1f2d3d}
+.nBody:before{content:'';position:absolute;left:-7px;bottom:0;border-width:0 0 12px 10px;border-style:solid;border-color:transparent transparent #1d2733 transparent}
+.nCard.new .nBody:before{border-bottom-color:#1f2d3d}
+.nTop{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#8fb3d9}.nTop b{display:flex;align-items:center;color:#9fd0ff;font-size:14px}.nTop button{padding:2px 8px;font-size:12px}
+.nText{white-space:pre-wrap;word-wrap:break-word;line-height:1.5;font-size:15px;color:#eef3f8}
+.nTime{align-self:flex-end;font-size:11px;color:#7f9bb8}
+.nGiftB{align-self:flex-start;display:flex;gap:8px;align-items:center;padding:8px 14px;background:var(--brass);border-color:var(--brass);color:#1a1408;font-weight:700}.nGiftB[disabled]{background:transparent;color:var(--muted);border-color:rgba(255,255,255,.15)}
+.nProf{display:flex;gap:14px;align-items:center;padding:12px;margin-top:10px;border-radius:12px;background:linear-gradient(90deg,rgba(42,127,192,.25),rgba(42,127,192,.05));border:1px solid rgba(59,156,242,.35)}
+.nProf img{width:66px;height:88px;border-radius:8px;object-fit:contain;background:#2a7fc0}.nProf b{display:flex;align-items:center;font-size:18px}.nProf small{color:#9fb7cf}
+.nCompose{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px dashed rgba(59,156,242,.6);border-radius:10px;margin-top:10px}.nCompose textarea{width:100%;box-sizing:border-box;resize:vertical;font:inherit;padding:10px;border-radius:8px;background:rgba(0,0,0,.35);color:inherit;border:1px solid rgba(255,255,255,.15)}
+.nGift{display:flex;align-items:center;gap:6px;font-size:13px}.nGift select{padding:8px;border-radius:6px;background:rgba(0,0,0,.35);color:inherit;border:1px solid rgba(255,255,255,.15)}
+.nEmpty{text-align:center;padding:30px 10px;color:var(--muted)}
+.rrow.own{border-color:rgba(59,156,242,.7);background:rgba(59,156,242,.08)}#lobbyList li.own{border-color:rgba(59,156,242,.7)}
 .admTag{margin-left:6px;padding:1px 6px;border-radius:3px;background:var(--brass);color:#1a1408;font-size:10px;font-weight:700;letter-spacing:.1em;font-style:normal}
 @media (max-width:900px) and (min-height:521px){.shopGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-height:520px){.shopWrap{gap:8px}.shopTop h2{font-size:24px}.shopTop .eb{display:none}.coinPill{height:38px;font-size:17px}.shopTabs{width:132px}.shopTabs button{padding:11px 12px;font-size:15px}.shopGrid.tall{grid-auto-rows:100%}.sCard .pic{min-height:0}.sCard .pic img{max-height:none}.pCard{min-height:150px;padding:10px}.oCard{padding:10px 12px}.oCard p{font-size:12px}.pCard .big{font-size:22px}.pCard .coin{width:28px;height:28px}.shopTip{display:none}
@@ -384,6 +406,7 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
     <button id="mMap"><span data-i="maps">Bazalar</span><small id="mapName"></small></button>
     <button id="mShop"><span data-i="shop">Do'kon</span><small class="coinTag"><svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><b id="menuCoins">0</b></small></button>
     <div class="row2 miniRow"><button id="mDaily" class="mini"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span data-i="daily"></span><i class="newDot" id="dailyDot" hidden></i></button><button id="mTg" class="mini tgB"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l12-9"/></svg><span data-i="tg_btn"></span><b>+150</b></button></div>
+    <button id="mNews"><span data-i="news">Xabarlar</span><small><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><b class="newsBadge" id="newsDot" hidden>0</b></small></button>
     <button id="mSettings"><span data-i="settings">Sozlamalar</span><small data-i="settings_sub"></small></button>
     <div class="foot"><span data-i="menu_foot"></span><span id="langFoot"></span></div>
   </div>
@@ -538,6 +561,20 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
     <div class="shopTop"><button id="mapsBack" class="sq" data-ia="back" aria-label="Orqaga">‹</button><div><div class="eb" data-i="maps_sub"></div><h2 data-i="maps"></h2></div><span class="grow"></span><div class="coinPill"><svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg><b id="mapsCoins">0</b></div></div>
     <div id="mapGrid" class="mapGrid"></div>
     <p class="muted sm shopTip" id="mapsTip"></p>
+  </div>
+</section>
+
+<section id="news" class="screen" hidden>
+  <div class="shopWrap newsWrap">
+    <div class="shopTop"><button id="newsBack" class="sq" data-ia="back" aria-label="Orqaga">‹</button><div><div class="eb" data-i="news_eb"></div><h2 data-i="news"></h2></div><span class="grow"></span></div>
+    <div class="nProf"><img src="owner.jpg" alt=""><div><b id="newsOwnerName">Lochinbek</b><small data-i="news_role"></small></div></div>
+    <div id="newsCompose" class="nCompose" hidden>
+      <div class="eb" data-i="news_new"></div>
+      <textarea id="newsText" maxlength="1200" rows="3" data-ip="news_ph"></textarea>
+      <div class="row2"><label class="nGift"><span data-i="news_gift"></span><select id="newsCoins"><option value="0">—</option><option>50</option><option>100</option><option>200</option><option>500</option><option>1000</option></select></label><button id="newsSend" class="primary grow" data-i="news_send"></button></div>
+      <small class="muted" id="newsErr"></small>
+    </div>
+    <div id="newsList" class="nList"></div>
   </div>
 </section>
 

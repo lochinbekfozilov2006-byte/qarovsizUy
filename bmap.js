@@ -7,8 +7,8 @@ const ID=window.MAP_ID==='map4'?'map4':'map3',H3=ID==='map3';
 let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
 const CF=H3?{file:'map3',LEVELS:[0,-2.8],B:[-12.3,12.3,-12.3,10.3],nav:{x0:-12.5,z0:-12.5,nx:50,nz:46},hw:.9,
   spawn:[[-.6,8.6],[.6,8.6],[-1.4,8.0],[1.4,8.0],[0,7.6]],yaw:0,exposure:.95,fog:[0x070a14,.055],bg:0x070a14}
- :{file:'map4',LEVELS:[0,-3.2],B:[-12.3,12.3,-9.3,9.3],nav:{x0:-12.5,z0:-9.5,nx:50,nz:38},hw:.82,
-  spawn:[[-7.6,-7.4],[-7.0,-6.6],[-7.6,-5.8],[-6.8,-7.9],[-8.4,-5.6]],yaw:-PI/2,exposure:.85,fog:[0x030405,.1],bg:0x030405};
+ :{file:'map4',LEVELS:[0,-3.2],B:[-13.5,13.5,-11.7,11.7],nav:{x0:-13.7,z0:-11.9,nx:55,nz:48},hw:.82,
+  spawn:[[-8.8,-8.84],[-8.2,-7.8],[-8.8,-7],[-8,-9.64],[-9.6,-6.8]],yaw:-PI/2,exposure:.85,fog:[0x030405,.1],bg:0x030405};
 const LV=CF.LEVELS,LOW=LV[1];
 const W={map:ID,H:-LOW,LEVELS:LV,solids:[],doors:[],curtains:[],containers:[],hideSpots:[],keySpots:[],batSpots:[],furnBoxes:[],flick:[],anim:[],F:[],D:[],WIN:[],KEY:[],BAT:[],HIDE:[],flickerAll:0,
  KINDS:[H3?'alvasti':'kor'],noCar:true,lampBulbs:[],exposure:CF.exposure,spawnYaw:CF.yaw};
@@ -32,14 +32,14 @@ W.isStair=function(x,z){return FL.some(f=>inFl(f,x,z,.3))};
 /* ---------- collisions ---------- */
 W.indexSolids=function(){const B=new Map();const cs=2;W.solids.forEach(s=>{for(let i=Math.floor((s.x1-.5)/cs);i<=Math.floor((s.x2+.5)/cs);i++)for(let j=Math.floor((s.z1-.5)/cs);j<=Math.floor((s.z2+.5)/cs);j++){const k=i*4096+j;let a=B.get(k);if(!a)B.set(k,a=[]);a.push(s)}});W.sIndex=B};
 W.near=function(x,z){if(!W.sIndex)return W.solids;return W.sIndex.get(Math.floor(x/2)*4096+Math.floor(z/2))||[]};
-W.blocked=function(x,z,y,r,ignoreDoors){r=r||.28;const b=CF.B;if(x<b[0]||x>b[1]||z<b[2]||z>b[3])return true;for(const s of W.near(x,z)){if(s.off)continue;if(ignoreDoors&&s.door!=null)continue;if(y+1.6<s.y1||y+.35>s.y2)continue;if(x>s.x1-r&&x<s.x2+r&&z>s.z1-r&&z<s.z2+r)return true}return false};
+W.blocked=function(x,z,y,r,ignoreDoors){r=r||.22;const b=CF.B;if(x<b[0]||x>b[1]||z<b[2]||z>b[3])return true;for(const s of W.near(x,z)){if(s.off)continue;if(ignoreDoors&&s.door!=null)continue;if(y+1.6<s.y1||y+.35>s.y2)continue;if(x>s.x1-r&&x<s.x2+r&&z>s.z1-r&&z<s.z2+r)return true}return false};
 
 /* ---------- monster navigation ---------- */
 W.NAVCFG={cs:.5,levels:LV.map(y=>Object.assign({},CF.nav,{y})),links:[],
  off(li,x,z){for(const f of FL){if(li===f.up&&inFl(f,x,z,.05))return true}return false}};
 W.spawn=function(i){const s=CF.spawn[i%CF.spawn.length];return V(s[0],0,s[1])};
 W.menuCam=H3?function(t,cam){const u=(Math.sin(t*.05)+1)/2;cam.position.set(-3+u*6,1.75,8.6-u*1.5);cam.lookAt(Math.sin(t*.11)*2,1.4,-4)}
- :function(t,cam){const u=(Math.sin(t*.05)+1)/2;cam.position.set(-5,1.65,-7.6+u*15);cam.lookAt(-5+Math.sin(t*.13)*.6,1.45,-7.6+u*15+(Math.cos(t*.05)>0?4:-4))};
+ :function(t,cam){const u=(Math.sin(t*.05)+1)/2;cam.position.set(-5.6,1.65,-9+u*18);cam.lookAt(-5.6+Math.sin(t*.13)*.6,1.45,-9+u*18+(Math.cos(t*.05)>0?4:-4))};
 
 /* ---------- runtime pieces ---------- */
 function flameTex(){return ctex(64,1,(x,s)=>{const g=x.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);g.addColorStop(0,'rgba(255,240,190,1)');g.addColorStop(.35,'rgba(255,150,40,.8)');g.addColorStop(1,'rgba(255,60,0,0)');x.fillStyle=g;x.fillRect(0,0,s,s)})}

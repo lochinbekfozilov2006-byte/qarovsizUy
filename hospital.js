@@ -29,7 +29,7 @@ W.isStair=function(x,z){return FL.some(f=>inFl(f,x,z,.3))};
 /* ---------- collisions ---------- */
 W.indexSolids=function(){const B=new Map();const cs=2;W.solids.forEach(s=>{for(let i=Math.floor((s.x1-.5)/cs);i<=Math.floor((s.x2+.5)/cs);i++)for(let j=Math.floor((s.z1-.5)/cs);j<=Math.floor((s.z2+.5)/cs);j++){const k=i*4096+j;let a=B.get(k);if(!a)B.set(k,a=[]);a.push(s)}});W.sIndex=B};
 W.near=function(x,z){if(!W.sIndex)return W.solids;return W.sIndex.get(Math.floor(x/2)*4096+Math.floor(z/2))||[]};
-W.blocked=function(x,z,y,r,ignoreDoors){r=r||.28;if(x<-6.7||x>6.7||z<-30.5||z>8.6)return true;for(const s of W.near(x,z)){if(s.off)continue;if(ignoreDoors&&s.door!=null)continue;if(y+1.6<s.y1||y+.35>s.y2)continue;if(x>s.x1-r&&x<s.x2+r&&z>s.z1-r&&z<s.z2+r)return true}return false};
+W.blocked=function(x,z,y,r,ignoreDoors){r=r||.22;if(x<-6.7||x>6.7||z<-30.5||z>8.6)return true;for(const s of W.near(x,z)){if(s.off)continue;if(ignoreDoors&&s.door!=null)continue;if(y+1.6<s.y1||y+.35>s.y2)continue;if(x>s.x1-r&&x<s.x2+r&&z>s.z1-r&&z<s.z2+r)return true}return false};
 
 /* ---------- monster navigation: one grid per floor, stair links between them ---------- */
 W.NAVCFG={cs:.5,levels:[0,1,2].map(li=>({x0:-6.8,z0:-30.6,nx:28,nz:79,y:li*LH})),links:[],
@@ -65,7 +65,7 @@ W.build=function(scene){
   /* nav links: the top step of each flight connects to the floor above */
   FL.forEach(f=>{const d=f.climbNeg?-.5:.5,zt=f.climbNeg?f.zl:f.zh;W.NAVCFG.links.push({a:f.lv,b:f.lv+1,x1:f.x-1,x2:f.x+1,z1:f.climbNeg?zt:zt-.5,z2:f.climbNeg?zt+.5:zt,d})});
   /* spots */
-  J.spots.forEach(s=>{const o={n:s.n,t:s.t==='floor'?'floor':'top',x:s.x,y:s.y,z:s.z,lv:s.lv};W.KEY.push(o)});W.BAT=W.KEY;
+  const RM=J.rooms||[];J.spots.forEach(s=>{const rm=RM.find(r=>r.lv===s.lv&&s.x>r.x0&&s.x<r.x1&&s.z>r.z0&&s.z<r.z1);const o={n:s.n,t:s.t==='floor'?'floor':'top',x:s.x,y:s.y,z:s.z,lv:s.lv,r:rm?rm.n:(s.z>0?'Qabulxona':s.z<-23.4?'Zinapoya':'Koridor')};W.KEY.push(o)});W.BAT=W.KEY;
   J.hide.forEach(h=>W.HIDE.push(h));
   W.STATION=J.station;
   /* visuals */
