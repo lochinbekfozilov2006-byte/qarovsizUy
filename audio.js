@@ -19,7 +19,7 @@ S.init=function(){if(ac)return;ac=new (window.AudioContext||window.webkitAudioCo
  [110,116.5,164.8].forEach(f=>{const o=ac.createOscillator();o.type='square';o.frequency.value=f;const g=ac.createGain();g.gain.value=.03;o.connect(g);g.connect(cf);o.start()});
  const tr=ac.createOscillator();tr.frequency.value=6;const tg=ac.createGain();tg.gain.value=.5;tr.connect(tg);tg.connect(cf.frequency);tr.start();
  fetch('roar.mp3').then(r=>r.arrayBuffer()).then(b=>ac.decodeAudioData(b,buf=>{roarBuf=buf},()=>{})).catch(()=>{});
- if(window.WORLD&&WORLD.map==='hosp')fetch('bemor.mp3').then(r=>r.arrayBuffer()).then(b=>ac.decodeAudioData(b,buf=>{roarBuf3=buf},()=>{})).catch(()=>{});
+ if(window.WORLD&&(WORLD.map==='hosp'||WORLD.map==='map3'))fetch('bemor.mp3').then(r=>r.arrayBuffer()).then(b=>ac.decodeAudioData(b,buf=>{roarBuf3=buf},()=>{})).catch(()=>{});
  fetch('roar2.mp3').then(r=>r.arrayBuffer()).then(b=>ac.decodeAudioData(b,buf=>{roarBuf2=buf},()=>{})).catch(()=>{});
  S.ready=true;setInterval(beat,50)};
 S.resume=function(){if(ac&&ac.state==='suspended')ac.resume()};
@@ -58,4 +58,17 @@ S.whisper=function(){if(!ac)return;const o=out(.35,(Math.random()-.5)*1.6);noise
 /* heartbeat & chase intensities set every frame */
 let heartK=0,lastBeat=0;S.setFear=function(heart,chase){heartK=heart;if(chaseG)chaseG.gain.setTargetAtTime(chase*.5,ac.currentTime,.4)};
 function beat(){if(!ac||heartK<.05)return;const now=ac.currentTime;const iv=1.1-heartK*.6;if(now-lastBeat<iv)return;lastBeat=now;[0,.18].forEach((d,i)=>{const t=now+d;const os=ac.createOscillator();os.frequency.setValueAtTime(i?50:60,t);os.frequency.exponentialRampToValueAtTime(32,t+.15);const g=ac.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.8*heartK,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.2);os.connect(g);g.connect(heartG);os.start(t);os.stop(t+.25)});heartG.gain.value=1}
+/* maps 3/4: looping generator hum and fire crackle (level 0..1 set every frame), power switch, dog howl */
+let humG=null,fireG=null;
+S.hum=function(v){if(!ac)return;if(!humG){humG=ac.createGain();humG.gain.value=0;humG.connect(master);const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=380;lp.connect(humG);
+ [[48,'sawtooth',.12],[96,'square',.04],[24.5,'sine',.25]].forEach(([f,ty,g])=>{const o=ac.createOscillator();o.type=ty;o.frequency.value=f;const gg=ac.createGain();gg.gain.value=g;o.connect(gg);gg.connect(lp);o.start()});
+ const n=ac.createBufferSource();n.buffer=noiseBuf;n.loop=true;const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=180;const ng=ac.createGain();ng.gain.value=.25;n.connect(bp);bp.connect(ng);ng.connect(lp);n.start()}
+ humG.gain.setTargetAtTime(v*.8,ac.currentTime,.3)};
+S.fire=function(v){if(!ac)return;if(!fireG){fireG=ac.createGain();fireG.gain.value=0;fireG.connect(master);const n=ac.createBufferSource();n.buffer=noiseBuf;n.loop=true;const hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=1200;const g=ac.createGain();g.gain.value=.12;n.connect(hp);hp.connect(g);g.connect(fireG);n.start();
+  setInterval(()=>{if(!fireG||fireG.gain.value<.02)return;for(let i=0;i<3;i++)if(Math.random()<.6)noiseHit(fireG,.03+Math.random()*.05,2000+Math.random()*3000,3,.6+Math.random()*.6,ac.currentTime+Math.random()*.2)},220)}
+ fireG.gain.setTargetAtTime(v*.7,ac.currentTime,.3)};
+S.power=function(){if(!ac)return;S.clunk();const t=ac.currentTime;const o=out(.5,0);const os=ac.createOscillator();os.type='sawtooth';os.frequency.setValueAtTime(40,t);os.frequency.exponentialRampToValueAtTime(220,t+2.5);const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=700;const g=ac.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.35,t+.5);g.gain.linearRampToValueAtTime(.0001,t+3.2);os.connect(f);f.connect(g);g.connect(o);os.start(t);os.stop(t+3.3)};
+S.howl=function(){if(!ac)return;const o=out(.22,(Math.random()*2-1)*.9);const t=ac.currentTime;const os=ac.createOscillator();os.type='triangle';os.frequency.setValueAtTime(380,t);os.frequency.linearRampToValueAtTime(620,t+.8);os.frequency.linearRampToValueAtTime(560,t+2.4);os.frequency.linearRampToValueAtTime(330,t+3.4);
+ const v=ac.createOscillator();v.frequency.value=5.5;const vg=ac.createGain();vg.gain.value=14;v.connect(vg);vg.connect(os.frequency);const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=1100;const g=ac.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.4,t+.5);g.gain.setValueAtTime(.4,t+2.6);g.gain.linearRampToValueAtTime(.0001,t+3.5);os.connect(f);f.connect(g);g.connect(o);os.start(t);v.start(t);os.stop(t+3.6);v.stop(t+3.6)};
+S.drip=function(){if(!ac)return;const o=out(.3,(Math.random()*2-1)*.8);const t0=ac.currentTime;for(let i=0;i<4;i++){const t=t0+i*(.6+Math.random()*.8);const os=ac.createOscillator();os.type='sine';os.frequency.setValueAtTime(1400+Math.random()*600,t);os.frequency.exponentialRampToValueAtTime(500,t+.08);const g=ac.createGain();g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.12);os.connect(g);g.connect(o);os.start(t);os.stop(t+.15)}};
 })();

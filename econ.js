@@ -7,8 +7,8 @@ const C={START:300,ENTRY:50,WIN:100,SOLO_WIN:30,AD_COINS:50,AD_DAILY:5,TG:150,TG
 const PRICE={char:{marlon:0,kate:0,boy:800,guard:1500},light:{warm:0,white:300,red:500,green:500}};
 const LIGHT_COLOR={warm:0xfff1d6,white:0xe8f2ff,red:0xff6a5a,green:0x9dff8a};
 const DAILY=[50,75,100,150,200,250,'light:green'];
-/* maps: 'house' is free, the hospital opens after 20 rewarded videos (or a purchase), two more are coming */
-const MAPS=[{id:'house',free:1},{id:'hosp',ads:20,price:'$1.99',sku:'map_hosp'},{id:'map3',coins:10000,soon:1},{id:'map4',vip:1,soon:1}];
+/* maps: 'house' is free, the others open after 20 rewarded videos each (or a purchase) */
+const MAPS=[{id:'house',free:1},{id:'hosp',ads:20,price:'$1.99',sku:'map_hosp'},{id:'map3',ads:20,price:'$1.99',sku:'map_map3'},{id:'map4',ads:20,price:'$1.99',sku:'map_map4'}];
 const PACKS=[{id:'coins_500',coins:500,price:'$0.99'},{id:'coins_1200',coins:1200,price:'$1.99',bonus:20},{id:'coins_3000',coins:3000,price:'$3.99',bonus:50,best:true}];
 
 function today(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}

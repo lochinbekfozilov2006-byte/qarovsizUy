@@ -63,7 +63,11 @@ A.nameTag=function(text,color){const c=document.createElement('canvas');c.width=
 /* ---------- humanoid monsters (Mixamo rigs, procedural animation) ---------- */
 A.MONS={zombie:{file:'zombie',h:1.95,roar:0,rate:1.25},parasite:{file:'parasite',h:2.2,roar:1,rate:.9},
  /* hospital patient: the zombie model in a washed-out, blood-stained look with its own gait */
- bemor:{file:'zombie',h:2.08,roar:2,rate:1,skin:'patient',style:'patient'}};
+ bemor:{file:'zombie',h:2.08,roar:2,rate:1,skin:'patient',style:'patient'},
+ /* map 3: Alvasti — a pale woman in a white dress, long black hair over the face, feet turned backwards */
+ alvasti:{file:'kate',h:1.9,roar:2,rate:1.45,skin:'ghost',style:'zombie',hair:1,gown:1,backFeet:1},
+ /* map 4: Ko'r — a blind lab creature with a bandage over its eyes */
+ kor:{file:'parasite',h:2.15,roar:1,rate:.75,skin:'blind',style:'zombie',band:1}};
 const msrc={};
 A.loadMonsters=function(kinds){const ks=kinds||['zombie','parasite'];const files={};ks.forEach(k=>{const f=A.MONS[k].file;if(!files[f])files[f]=A.loadGLB(f)});return Promise.all(ks.map(k=>files[A.MONS[k].file].then(g=>{msrc[k]=g})))};
 /* repaint a texture: cold, sickly skin and greyed cloth, blood kept dark red */
@@ -72,7 +76,26 @@ const skinCache=new Map();function patientTex(t){if(!t||!t.image)return t;if(ski
   if(blood){a[i]=Math.min(255,r*.62);a[i+1]=g*.18;a[i+2]=b*.2}else{const k=Math.pow(l/255,.92)*255;a[i]=k*.78;a[i+1]=k*.9;a[i+2]=k*.94}}
  x.putImageData(d,0,0);/* a few fresh streaks */for(let k=0;k<60;k++){x.fillStyle='rgba('+(90+Math.random()*50|0)+',4,6,'+(.25+Math.random()*.4).toFixed(2)+')';const px=Math.random()*c.width,py=Math.random()*c.height;x.fillRect(px,py,2+Math.random()*6,10+Math.random()*60)}
  const nt=new THREE.CanvasTexture(c);nt.encoding=THREE.sRGBEncoding;nt.flipY=t.flipY;nt.wrapS=t.wrapS;nt.wrapT=t.wrapT;skinCache.set(t,nt);return nt}
+const skinCache2=new Map();function recolor(t,key,fn){if(!t||!t.image)return t;const ck=key+'|'+t.uuid;if(skinCache2.has(ck))return skinCache2.get(ck);const im=t.image;const c=document.createElement('canvas');c.width=im.width;c.height=im.height;const x=c.getContext('2d');x.drawImage(im,0,0);
+ let d;try{d=x.getImageData(0,0,c.width,c.height)}catch(e){skinCache2.set(ck,t);return t}const a=d.data;for(let i=0;i<a.length;i+=4){const o=fn(a[i],a[i+1],a[i+2]);a[i]=o[0];a[i+1]=o[1];a[i+2]=o[2]}x.putImageData(d,0,0);
+ const nt=new THREE.CanvasTexture(c);nt.encoding=THREE.sRGBEncoding;nt.flipY=t.flipY;nt.wrapS=t.wrapS;nt.wrapT=t.wrapT;skinCache2.set(ck,nt);return nt}
+const SKINF={ghost:(r,g,b)=>{const l=(.3*r+.59*g+.11*b)/255;const k=150+l*95;return [k*.93,k*.95,k]},blind:(r,g,b)=>{const l=(.3*r+.59*g+.11*b)/255;const k=70+l*150;return [k*1.0,k*.86,k*.84]}};
+/* attach a mesh to a bone so that it keeps world size and starts aligned with the world axes */
+function boneAttach(ch,bn,obj){const b=ch.bones[bn];if(!b)return false;ch.group.updateMatrixWorld(true);const ws=new THREE.Vector3(),wq=new THREE.Quaternion(),wp=new THREE.Vector3();b.matrixWorld.decompose(wp,wq,ws);const gq=new THREE.Quaternion();ch.group.getWorldQuaternion(gq);
+ const holder=new THREE.Group();holder.scale.set(1/ws.x,1/ws.y,1/ws.z);holder.quaternion.copy(wq.clone().invert().multiply(gq));holder.add(obj);b.add(holder);return true}
+function addHair(ch){const g=new THREE.Group();const m=new THREE.MeshStandardMaterial({color:0x080707,roughness:.9,side:THREE.DoubleSide});m.color.convertSRGBToLinear();
+ const cap=new THREE.Mesh(new THREE.SphereGeometry(.125,12,8,0,Math.PI*2,0,Math.PI*.6),m);cap.position.y=.1;g.add(cap);
+ for(let i=0;i<26;i++){const a=i/26*Math.PI*2;const L=.75+Math.random()*.35;const st=new THREE.Mesh(new THREE.PlaneGeometry(.06,L),m);const r=.12+(Math.cos(a)>0?.02:0);st.position.set(Math.sin(a)*r,.16-L/2,Math.cos(a)*r);st.rotation.y=a;st.rotation.x=Math.cos(a)>.3?-.06:.04;g.add(st)}
+ return boneAttach(ch,'Head',g)}
+function addGown(ch){const m=new THREE.MeshStandardMaterial({color:0xb8b6ac,roughness:.95,side:THREE.DoubleSide});m.color.convertSRGBToLinear();const g=new THREE.Group();
+ const sk=new THREE.Mesh(new THREE.CylinderGeometry(.19,.42,1.05,14,1,true),m);sk.position.y=-.5;g.add(sk);const top=new THREE.Mesh(new THREE.CylinderGeometry(.17,.2,.6,12,1,true),m);top.position.y=.28;g.add(top);
+ for(let i=0;i<6;i++){const s=new THREE.Mesh(new THREE.PlaneGeometry(.08,.25),new THREE.MeshBasicMaterial({color:0x3a0606}));const a=Math.random()*6.28;s.position.set(Math.sin(a)*.3,-.6-Math.random()*.3,Math.cos(a)*.3);s.rotation.y=a;g.add(s)}
+ return boneAttach(ch,'Hips',g)}
+function addBand(ch){const m=new THREE.MeshStandardMaterial({color:0x6a5a48,roughness:1});m.color.convertSRGBToLinear();const b=new THREE.Mesh(new THREE.CylinderGeometry(.115,.115,.07,14,1,true),m);b.material.side=THREE.DoubleSide;b.position.y=.09;const g=new THREE.Group();g.add(b);
+ const st=new THREE.Mesh(new THREE.PlaneGeometry(.05,.05),new THREE.MeshBasicMaterial({color:0x4a0505}));st.position.set(-.03,.09,.117);g.add(st);return boneAttach(ch,'Head',g)}
 A.makeHumanMonster=function(kind){const def=A.MONS[kind];const ch=A.makeCharacter(kind,{gltf:msrc[kind],def:{h:def.h},style:def.style||'zombie'});
+ if(SKINF[def.skin])ch.group.traverse(o=>{if(o.isMesh&&o.material){o.material=[].concat(o.material).map(m=>{const c=m.clone();c.map=recolor(m.map,def.skin,SKINF[def.skin]);c.color&&c.color.setRGB(1,1,1);c.roughness=.7;if(/hair/i.test(o.name+m.name)&&def.hair){c.color.setRGB(.02,.02,.02);c.map=null}return c});if(o.material.length===1)o.material=o.material[0]}});
+ try{if(def.hair)addHair(ch);if(def.gown)addGown(ch);if(def.band)addBand(ch);if(def.backFeet)['LeftFoot','RightFoot'].forEach(n=>{const b=ch.bones[n];if(b)b.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI))})}catch(e){console.warn('mon extra',e)}
  if(def.skin==='patient')ch.group.traverse(o=>{if(o.isMesh&&o.material){o.material=[].concat(o.material).map(m=>{const c=m.clone();c.map=patientTex(m.map);c.color&&c.color.setRGB(.95,.97,1);c.roughness=.6;return c});if(o.material.length===1)o.material=o.material[0]}});let anim='idle',ts=1,t=0;
  const M={group:ch.group,kind,play(name,fade,tsc){anim=name;ts=tsc||1;M.anim=name},update(dt){t+=dt;const sp=anim==='walk'?2.0*ts:0;ch.pose(dt,sp,0,t,anim==='attack'?'attack':anim==='scare'?'scare':null)},anim:'idle'};return M};
 /* ---------- monster ---------- */

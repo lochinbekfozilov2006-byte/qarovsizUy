@@ -589,9 +589,9 @@ button.danger{border-color:rgba(224,115,95,.55);color:#f0a08f}
 <script src="SkeletonUtils.js"></script>
 <script src="peerjs.min.js"></script>
 <script>/* pick the map before the world script loads: ?map=… or the last choice, if it is unlocked */
-(function(){var q=new URLSearchParams(location.search),m=q.get('map');if(m==null){try{m=localStorage.getItem('qu_map')}catch(e){}}if(m!=='hosp')m='house';
- if(m==='hosp'&&!q.get('join')){try{var s=JSON.parse(localStorage.getItem('qu_econ')||'{}');if(!(s.admin||(s.maps&&s.maps.own&&s.maps.own.indexOf('hosp')>=0)))m='house'}catch(e){m='house'}}
- window.MAP_ID=m;document.write('<script src="'+(m==='hosp'?'hospital.js':'world.js')+'"><\/script>')})();</script>
+(function(){var q=new URLSearchParams(location.search),m=q.get('map');if(m==null){try{m=localStorage.getItem('qu_map')}catch(e){}}if(['hosp','map3','map4'].indexOf(m)<0)m='house';
+ if(m!=='house'&&!q.get('join')){try{var s=JSON.parse(localStorage.getItem('qu_econ')||'{}');if(!(s.admin||(s.maps&&s.maps.own&&s.maps.own.indexOf(m)>=0)))m='house'}catch(e){m='house'}}
+ window.MAP_ID=m;document.write('<script src="'+(m==='hosp'?'hospital.js':m==='house'?'world.js':'bmap.js')+'"><\/script>')})();</script>
 <script src="actors.js"></script>
 <script src="audio.js"></script>
 <script src="i18n.js"></script>
