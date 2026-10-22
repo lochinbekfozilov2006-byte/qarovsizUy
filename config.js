@@ -1,13 +1,15 @@
 /* Qarovsiz Uy — sozlamalar.
-   TURN server (Metered.ca) — boshqa shahardagi do'stlar bilan ulanish uchun.
-   Faqat quyidagi ikki qatorni o'zgartiring: Metered'dagi Username va Password. */
-var TURN_USER = '0ca5b8351b119449e85a0a40';
-var TURN_PASS = 'Uh7XrLCj0Z2w+mIx';
-
-window.TURN_SERVERS = window.TURN_SERVERS || [
-  { urls: 'stun:stun.relay.metered.ca:80' },
-  { urls: 'turn:global.relay.metered.ca:80', username: TURN_USER, credential: TURN_PASS },
-  { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: TURN_USER, credential: TURN_PASS },
-  { urls: 'turn:global.relay.metered.ca:443', username: TURN_USER, credential: TURN_PASS },
-  { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: TURN_USER, credential: TURN_PASS }
-];
+   Turli tarmoqdagi (mobil internet, boshqa Wi-Fi) o'yinchilar ulanishi uchun TURN server kerak.
+   TURN ma'lumotlari kodda emas, Vercel → Settings → Environment Variables'da turadi (api/turn.js ga qarang):
+     CF_TURN_KEY_ID + CF_TURN_API_TOKEN  — Cloudflare Realtime TURN (oyiga 1000 GB bepul)
+     yoki METERED_DOMAIN + METERED_API_KEY  — Metered (oyiga 20 GB bepul)
+   (yoki TURN_USER / TURN_PASS — Metered'dagi statik Username/Password) */
+window.TURN_SERVERS = window.TURN_SERVERS || [];
+(function(){
+  var base = '';
+  try { if (!(location.protocol === 'https:' && /vercel\.app$/.test(location.hostname))) base = 'https://qarovsiz-uybot.vercel.app'; } catch (e) {}
+  window.TURN_READY = fetch(base + '/api/turn', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+    if (j && j.ok && j.iceServers && j.iceServers.length) window.TURN_SERVERS = j.iceServers;
+    window.TURN_OK = !!(j && j.ok);
+  }).catch(function () { window.TURN_OK = false; });
+})();
