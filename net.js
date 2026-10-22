@@ -60,4 +60,6 @@ N.close=function(){clearInterval(pingT);try{if(N.peer)N.peer.destroy()}catch(e){
 /* rough round trip to the signalling server, for the menu */
 N.serverPing=function(cb){const t0=performance.now();const o=opts();const url=o.host?('http://'+o.host+':'+o.port+'/'):'https://0.peerjs.com/peerjs/id?ts='+Date.now();
  fetch(url,{cache:'no-store',mode:'no-cors'}).then(()=>cb(Math.round(performance.now()-t0))).catch(()=>cb(null))};
+/* TURN kalitlari /api/turn dan kelguncha (3 s gacha) kutib, keyin ulanish */
+(function(){const W=f=>function(){const a=arguments,go=()=>f.apply(N,a),R=window.TURN_READY;if(R&&!(window.TURN_SERVERS||[]).length)Promise.race([R,new Promise(r=>setTimeout(r,3000))]).then(go,go);else go()};['host','hostOpen','scan','join'].forEach(k=>{N[k]=W(N[k])})})();
 })();
