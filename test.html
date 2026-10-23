@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qarovsiz Uy — tarmoq tekshiruvi</title>
+<style>
+body{margin:0;background:#141012;color:#eee;font:16px/1.45 system-ui,sans-serif;padding:16px}
+h1{font-size:20px;margin:0 0 4px}p{color:#aaa;margin:0 0 14px;font-size:14px}
+.r{display:flex;gap:10px;padding:10px 12px;border:1px solid #333;border-radius:10px;margin:8px 0;background:#1d181a}
+.i{width:24px;text-align:center}.t{flex:1}.t small{display:block;color:#999;font-size:13px;word-break:break-word}
+button{background:#9b2c2c;color:#fff;border:0;border-radius:10px;padding:12px 18px;font-size:16px;margin-top:10px;width:100%}
+#sum{margin-top:14px;padding:12px;border-radius:10px;background:#222;font-size:15px}
+</style></head><body>
+<h1>Tarmoq tekshiruvi</h1>
+<p>Telefonda oching, natija chiqqach ekranni skrinshot qilib yuboring.</p>
+<div id="list"></div>
+<button id="go">Qayta tekshirish</button>
+<div id="sum"></div>
+<script src="peerjs.min.js"></script>
+<script src="config.js"></script>
+<script src="net.js"></script>
+<script>
+const L=document.getElementById('list');
+function row(name){const d=document.createElement('div');d.className='r';d.innerHTML='<span class="i">⏳</span><span class="t">'+name+'<small></small></span>';L.appendChild(d);
+ return (ok,info)=>{d.querySelector('.i').textContent=ok===null?'⚠️':(ok?'✅':'❌');d.querySelector('small').textContent=info||''}}
+const ms=t=>Math.round(performance.now()-t)+' ms';
+const wait=(p,t)=>Promise.race([p,new Promise(r=>setTimeout(()=>r('__timeout'),t))]);
+async function run(){
+ L.innerHTML='';document.getElementById('sum').textContent='';const res={};
+ const info=row('Qurilma');info(true,(navigator.userAgent.match(/\(([^)]+)\)/)||[,''])[1]+' · '+location.host+(window.Capacitor?' · ilova':' · brauzer'));
+ // 1 TURN
+ let s=row('TURN kalitlari (/api/turn)'),t=performance.now();
+ await wait(window.TURN_READY||Promise.resolve(),6000);
+ res.turn=(window.TURN_SERVERS||[]).length>0;s(res.turn,res.turn?'olindi · '+ms(t):'olinmadi (TURN_OK='+window.TURN_OK+')');
+ // 2 signal
+ s=row('Signal server (0.peerjs.com)');t=performance.now();
+ const sig=await wait(new Promise(r=>{let p;try{p=new Peer({debug:0})}catch(e){r('err:'+e.message);return}p.on('open',()=>{r('ok');p.destroy()});p.on('error',e=>r('err:'+e.type))}),12000);
+ res.sig=sig==='ok';s(res.sig,res.sig?'ulandi · '+ms(t):(sig==='__timeout'?'12 s ichida javob yo\'q':sig));
+ // 3 relay candidates
+ s=row('TURN relay (Cloudflare)');t=performance.now();
+ if(!res.turn){s(false,'TURN kalitlari yo\'q')}else{
+  const n=await wait(new Promise(async r=>{const pc=new RTCPeerConnection({iceServers:window.TURN_SERVERS,iceTransportPolicy:'relay'});let k=0;pc.createDataChannel('x');
+   pc.onicecandidate=e=>{if(e.candidate&&/ relay /.test(e.candidate.candidate))k++;if(!e.candidate){pc.close();r(k)}};await pc.setLocalDescription(await pc.createOffer());setTimeout(()=>{try{pc.close()}catch(e){}r(k)},7000)}),9000);
+  res.relay=n>0;s(res.relay,res.relay?n+' ta yo\'l · '+ms(t):'relay yo\'li topilmadi')}
+ // 4 full connection via relay
+ s=row('Ulanish sinovi (server orqali)');t=performance.now();
+ if(!res.sig||!res.turn){s(false,'oldingi qadam ishlamadi')}else{
+  const cfg={debug:0,config:{iceServers:window.TURN_SERVERS,iceTransportPolicy:'relay'}};
+  const r4=await wait(new Promise(r=>{const h=new Peer(cfg);let g;h.on('error',e=>r('host:'+e.type));h.on('open',id=>{h.on('connection',c=>c.on('data',d=>{r(d);setTimeout(()=>{h.destroy();g&&g.destroy()},300)}));
+   g=new Peer(cfg);g.on('error',e=>r('join:'+e.type));g.on('open',()=>{const c=g.connect(id,{reliable:true});c.on('open',()=>c.send('ok'))})})}),20000);
+  res.conn=r4==='ok';s(res.conn,res.conn?'xabar yetib bordi · '+ms(t):(r4==='__timeout'?'20 s ichida ulanmadi':r4))}
+ // 5 open room slot
+ s=row('Ochiq baza ochish');t=performance.now();
+ const r5=await wait(new Promise(r=>NET.hostOpen((e,c)=>r(e?'err:'+e:c))),20000);
+ res.open=/^O\d+$/.test(r5);s(res.open,res.open?'baza '+r5+' ochildi · '+ms(t):(r5==='__timeout'?'20 s ichida ochilmadi':r5));
+ // 6 scan
+ s=row('Ochiq bazalar ro\'yxati');t=performance.now();
+ const r6=await wait(new Promise(r=>NET.scan(f=>r(f))),20000);
+ if(r6==='__timeout')s(false,'20 s ichida javob yo\'q');else{const mine=r6.some(x=>'O'+(x.slot+1)===r5);s(mine?true:null,r6.length+' ta baza topildi'+(res.open?(mine?' (o\'zimiznikini ham ko\'rdi)':' (o\'zimiznikini ko\'rmadi)'):'')+' · '+ms(t))}
+ NET.close();
+ const bad=Object.keys(res).filter(k=>!res[k]);
+ document.getElementById('sum').textContent=bad.length?'Muammo: '+bad.join(', '):'Hammasi ishlayapti ✅';
+}
+document.getElementById('go').onclick=run;run();
+</script></body></html>
